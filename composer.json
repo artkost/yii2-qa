@@ -19,7 +19,6 @@
         "yiisoft/yii2-bootstrap": "*"
     },
     "autoload": {
-        "psr-0": { "artkost\\qa\\": "" },
         "psr-4": { "artkost\\qa\\": "" }
     },
     "target-dir": "artkost/qa"

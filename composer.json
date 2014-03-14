@@ -1,0 +1,26 @@
+{
+    "name": "artkost/yii2-qa",
+    "description": "The Questions and Answers module",
+    "keywords": ["yii", "qa"],
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/artkost/yii2-qa/issues",
+        "source": "https://github.com/artkost/yii2-qa"
+    },
+    "authors": [
+        {
+            "name": "Nikolay Kostyurin",
+            "email": "nikolay@artkost.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "*"
+    },
+    "autoload": {
+        "psr-0": { "artkost\\qa\\": "" },
+        "psr-4": { "artkost\\qa\\": "" }
+    },
+    "target-dir": "artkost/qa"
+}

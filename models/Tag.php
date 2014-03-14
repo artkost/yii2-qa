@@ -2,6 +2,17 @@
 
 namespace artkost\qa\models;
 
+/**
+ * Tag Model
+ * @package artkost\qa\models
+ *
+ * @property integer $id
+ * @property string $name
+ * @property integer $frequency
+ *
+ * @author Nikolay Kostyurin <nikolay@artkost.ru>
+ * @since 2.0
+ */
 class Tag extends \yii\db\ActiveRecord
 {
     /**
@@ -17,6 +28,20 @@ class Tag extends \yii\db\ActiveRecord
      */
     public function rules()
     {
-        return [];
+        return [
+            [['name'], 'required'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Name',
+            'frequency' => 'Frequency',
+        ];
     }
 }

@@ -10,7 +10,6 @@ use Yii;
 
 class DefaultController extends Controller
 {
-    public $layout = 'main';
     /**
      * @var \artkost\qa\Module
      */
@@ -33,7 +32,7 @@ class DefaultController extends Controller
     public function actionAsk()
     {
         $model = new Question();
-        if ($model->load($_POST)) {
+        if ($model->load($_POST) && $model->save()) {
             Yii::$app->session->setFlash('questionFormSubmitted');
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -44,7 +43,7 @@ class DefaultController extends Controller
     public function actionAnswer($id)
     {
         $model = new Answer();
-        if ($model->load($_POST)) {
+        if ($model->load($_POST) && $model->save()) {
             Yii::$app->session->setFlash('answerFormSubmitted');
             return $this->redirect(['view', 'id' => $id]);
         } else {
@@ -76,7 +75,7 @@ class DefaultController extends Controller
     protected function findQuestionModel($id = null)
     {
         /** if $id is null, return ActiveQuery */
-        if (($model = Answer::find($id)) !== null) {
+        if (($model = Question::find($id)) !== null) {
             return $model;
         }
         else {

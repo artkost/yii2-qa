@@ -3,7 +3,7 @@
 namespace artkost\qa\controllers;
 
 use yii\web\Controller;
-use artkost\qa\models\AnswerForm;
+use artkost\qa\models\Answer;
 use Yii;
 
 class DefaultController extends Controller
@@ -26,7 +26,7 @@ class DefaultController extends Controller
 
     public function actionAnswer($id)
     {
-        $model = new AnswerForm;
+        $model = Answer::find();
         if ($model->load($_POST)) {
             Yii::$app->session->setFlash('answerFormSubmitted');
             return $this->redirect([]);

@@ -20,6 +20,5 @@
     },
     "autoload": {
         "psr-4": { "artkost\\qa\\": "" }
-    },
-    "target-dir": "artkost/qa"
+    }
 }

@@ -2,8 +2,8 @@
 @import "qa.view.css";
 @import "qa.question.form.css";
 
-.qa-index .question-edit,
-.qa-view .question-edit {
+.question-delete,
+.question-edit {
     font-size: 10px;
 }
 

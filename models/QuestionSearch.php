@@ -22,10 +22,15 @@ class QuestionSearch extends Model
             'query' => $query,
         ]);
 
-        if (!($this->load($params) && $this->validate())) {
-            return $dataProvider;
+        if (isset($params['tags']) && $params['tags']) {
+            $tags = Tag::string2Array($params['tags']);
+
+            $query->andWhere(['like', 'tags', $tags]);
         }
 
+        if (!($this->load($params, '') && $this->validate())) {
+            return $dataProvider;
+        }
 
         return $dataProvider;
     }

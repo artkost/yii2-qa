@@ -5,6 +5,8 @@ namespace artkost\qa\models;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
+use Yii;
 
 /**
  * Answer Model
@@ -72,5 +74,62 @@ class Answer extends ActiveRecord
             'content' => 'Content',
             'status' => 'Status',
         ];
+    }
+
+    public function getUpdated()
+    {
+        return Yii::$app->formatter->asTime($this->updated_at);
+    }
+
+    public function getCreated()
+    {
+        return Yii::$app->formatter->asTime($this->created_at);
+    }
+
+    /**
+     * Apply possible answers order to query
+     * @param ActiveQuery $query
+     * @param $order
+     * @return ActiveQuery
+     */
+    public static function applyOrder(ActiveQuery $query, $order)
+    {
+        switch ($order) {
+            case 'oldest':
+                $query->orderBy('created_at DESC');
+                break;
+
+            case 'active':
+                $query->orderBy('created_at ASC');
+                break;
+
+            case 'votes':
+            default:
+                $query->orderBy('votes DESC');
+                break;
+        }
+
+        return $query;
+    }
+
+    /**
+     * This is invoked after the record is saved.
+     */
+    public function afterSave($insert)
+    {
+        parent::afterSave($insert);
+
+        if ($insert) {
+            Question::incrementAnswers($this->question_id);
+        }
+    }
+
+    /**
+     * This is invoked after the record is deleted.
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Question::decrementAnswers($this->question_id);
     }
 }

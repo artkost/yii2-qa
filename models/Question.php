@@ -35,6 +35,12 @@ class Question extends ActiveRecord
     const STATUS_PUBLISHED = 1;
 
     /**
+     * Old tags populated after find record
+     * @var string
+     */
+    protected $_oldTags='';
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -88,6 +94,33 @@ class Question extends ActiveRecord
     }
 
     /**
+     * This is invoked when a record is populated with data from a find() call.
+     */
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->_oldTags=$this->tags;
+    }
+
+    /**
+     * This is invoked after the record is saved.
+     */
+    public function afterSave($insert)
+    {
+        parent::afterSave($insert);
+        Tag::updateFrequency($this->_oldTags, $this->tags);
+    }
+
+    /**
+     * This is invoked after the record is deleted.
+     */
+    public function afterDelete()
+    {
+        parent::afterDelete();
+        Tag::updateFrequency($this->tags, '');
+    }
+
+    /**
      * @return array a list of links that point to the post list filtered by every tag of this post
      */
     public function getTagsList()
@@ -95,12 +128,22 @@ class Question extends ActiveRecord
         return Tag::string2Array($this->tags);
     }
 
+    public function getUpdated()
+    {
+        return Yii::$app->formatter->asTime($this->updated_at);
+    }
+
+    public function getCreated()
+    {
+        return Yii::$app->formatter->asTime($this->created_at);
+    }
+
     /**
      * Check if current user can edit this model
      */
     public function isAuthor()
     {
-        return $this->user_id == Yii::$app->user->identity->id;
+        return $this->user_id == Yii::$app->user->id;
     }
 
     /**
@@ -111,11 +154,28 @@ class Question extends ActiveRecord
         return $this->hasMany(Answer::className(), ['question_id' => 'id']);
     }
 
+    public function getUser()
+    {
+        $userClass = \app\models\User::className();
+
+        return $this->hasOne($userClass, ['user_id' => 'id']);
+    }
+
     /**
      * Normalizes the user-entered tags.
      */
     public function normalizeTags($attribute, $params)
     {
         $this->tags = Tag::array2String(array_unique(Tag::string2Array($this->tags)));
+    }
+
+    public static function incrementAnswers($id)
+    {
+        self::updateAllCounters(['answers' => 1], ['id' => $id]);
+    }
+
+    public static function decrementAnswers($id)
+    {
+        self::updateAllCounters(['answers' => -1], ['id' => $id]);
     }
 }

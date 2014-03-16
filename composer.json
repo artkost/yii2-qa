@@ -1,7 +1,7 @@
 {
     "name": "artkost/yii2-qa",
-    "description": "The Questions and Answers module",
-    "keywords": ["yii", "qa"],
+    "description": "The Questions and Answers module inspired by Stack Overflow",
+    "keywords": ["yii", "qa", "faq"],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
     "support": {
@@ -16,8 +16,7 @@
     ],
     "require": {
         "yiisoft/yii2": "*",
-        "yiisoft/yii2-bootstrap": "*",
-        "twitter/typeahead.js": "v0.10.2"
+        "yiisoft/yii2-bootstrap": "*"
     },
     "autoload": {
         "psr-4": { "artkost\\qa\\": "" }

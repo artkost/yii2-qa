@@ -1,7 +1,7 @@
 <?php
 
-use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 $action = isset($action) ? $action : '';
 
@@ -11,10 +11,10 @@ $form = ActiveForm::begin(['id' => 'answer-form', 'action' => $action]);
 
 <?= $form->errorSummary($model); ?>
 
-<?=$form->field($model, 'content')->textarea(['rows' => 6])->label(''); ?>
+<?= $form->field($model, 'content')->textarea(['rows' => 6])->label(''); ?>
 
-<div class="form-group">
-    <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-</div>
+    <div class="form-group">
+        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    </div>
 
 <?php ActiveForm::end() ?>

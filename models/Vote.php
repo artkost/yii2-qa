@@ -2,11 +2,12 @@
 
 namespace artkost\qa\models;
 
+use Yii;
+use yii\base\UnknownClassException;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use Yii;
 
 /**
  * Class Votes
@@ -45,8 +46,7 @@ class Vote extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'user_id', 'entity_id', 'vote'], 'required'],
-            [['user_id'], 'in']
+            [['entity', 'entity_id', 'vote'], 'required'],
         ];
     }
 
@@ -67,14 +67,18 @@ class Vote extends ActiveRecord
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'created_ip'
                 ],
-                'value' => function ($event) { return ip2long(Yii::$app->request->getUserIP()); }
+                'value' => function ($event) {
+                        return ip2long(Yii::$app->request->getUserIP());
+                    }
             ],
             [
                 'class' => AttributeBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_AFTER_FIND => 'created_ip'
                 ],
-                'value' => function ($event) { return long2ip($event->sender->created_ip); }
+                'value' => function ($event) {
+                        return long2ip($event->sender->created_ip);
+                    }
             ],
             [
                 'class' => BlameableBehavior::className(),
@@ -88,12 +92,14 @@ class Vote extends ActiveRecord
     /**
      * Check if current user has access to vote
      */
-    public static function isUserVoted()
+    public static function isUserVoted(ActiveRecord $model)
     {
-        $userId = Yii::$app->user->identity->id;
-        $model = self::find();
-
-        return true;
+        $userId = Yii::$app->user->id;
+        return self::find()->where([
+            'user_id' => $userId,
+            'entity' => self::getModelEntity($model),
+            'entity_id' => $model->id
+        ])->exists();
     }
 
     /**
@@ -102,7 +108,7 @@ class Vote extends ActiveRecord
      * @param $type
      * @return int|mixed
      */
-    public static function increment(ActiveRecord $model, $type)
+    public static function process(ActiveRecord $model, $type)
     {
         switch ($type) {
             case self::TYPE_UP:
@@ -123,11 +129,7 @@ class Vote extends ActiveRecord
 
             $vote = new self(['entity_id' => $model->id, 'vote' => $value]);
 
-            if ($model instanceof Question) {
-                $vote->entity = self::ENTITY_QUESTION;
-            } elseif ($model instanceof Answer) {
-                $vote->entity = self::ENTITY_ANSWER;
-            }
+            $vote->entity = self::getModelEntity($model);
 
             if ($vote->save() && $model->save()) {
                 return $model->votes;
@@ -135,6 +137,24 @@ class Vote extends ActiveRecord
         }
 
         return $votes;
+    }
+
+    /**
+     * Get entity type by given instance of model
+     * @param $model
+     * @throws UnknownClassException
+     * @return string
+     */
+    protected static function getModelEntity($model)
+    {
+        if ($model instanceof Question) {
+            return self::ENTITY_QUESTION;
+        } elseif ($model instanceof Answer) {
+            return self::ENTITY_ANSWER;
+        } else {
+            $className = get_class($model);
+            throw new UnknownClassException("Model class '{$className}' not supported");
+        }
     }
 
 }

@@ -8,12 +8,15 @@ use artkost\qa\models\Question;
 use artkost\qa\models\QuestionSearch;
 use artkost\qa\models\Tag;
 use artkost\qa\models\Vote;
-use Yii;
+use yii\data\ActiveDataProvider;
+use yii\db\ActiveRecord;
 use yii\web\AccessControl;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\VerbFilter;
+use Yii;
 
 class DefaultController extends Controller
 {
@@ -42,12 +45,12 @@ class DefaultController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'tagged', 'tag-suggest'],
+                        'actions' => ['index', 'view', 'tag-suggest'],
                         'roles' => ['?', '@']
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['ask', 'answer', 'edit', 'question-vote', 'answer-vote'],
+                        'actions' => ['ask', 'answer', 'edit', 'delete', 'question-vote', 'answer-vote'],
                         'roles' => ['@']
                     ],
                     [
@@ -66,15 +69,6 @@ class DefaultController extends Controller
         return $this->render('index', compact('searchModel', 'dataProvider'));
     }
 
-    public function actionTagged($name)
-    {
-        $tags = Tag::string2Array($name);
-
-        $models = $this->findQuestionModel()->where(['like', 'tags', $tags])->all();
-
-        return $this->render('index', compact('models'));
-    }
-
     public function actionTagSuggest()
     {
         if (isset($_GET['q']) && ($keyword = trim($_GET['q'])) !== '') {
@@ -82,33 +76,62 @@ class DefaultController extends Controller
             if ($tags !== array()) {
                 return implode("\n", $tags);
             }
-
         }
     }
 
     public function actionView($id)
     {
+        /** @var Question $model */
         $model = $this->findQuestionModel($id);
 
         if ($this->isUserUnique()) {
-            Question::updateAllCounters(['views' => 1], ['id' => $id]);
+            $model->updateCounters(['views' => 1]);
         }
 
         $answer = new Answer;
 
-        return $this->render('view', compact('model', 'answer'));
+        $query = Answer::find();
+
+        $answerOrder = Answer::applyOrder($query, Yii::$app->request->get('answers', 'votes'));
+
+        $answerDataProvider = new ActiveDataProvider([
+            'query' => $query->where(['question_id' => $model->id]),
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+        return $this->render('view', compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
     }
 
     public function actionEdit($id)
     {
+        /** @var Question $model */
         $model = $this->findQuestionModel($id);
 
-        if ($model->load($_POST) && $model->save()) {
-            Yii::$app->session->setFlash('questionFormSubmitted');
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
+        if ($model->isAuthor()) {
+            if ($model->load($_POST) && $model->save()) {
+                Yii::$app->session->setFlash('questionFormSubmitted');
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
 
-        return $this->render('edit', compact('model'));
+            return $this->render('edit', compact('model'));
+        } else {
+            throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+        }
+    }
+
+    public function actionDelete($id)
+    {
+        /** @var Question $model */
+        $model = $this->findQuestionModel($id);
+
+        if ($model->isAuthor()) {
+            $model->delete();
+            return $this->redirect(['index']);
+        } else {
+            throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+        }
     }
 
     public function actionAsk()
@@ -127,14 +150,14 @@ class DefaultController extends Controller
     {
         $model = $this->findQuestionModel($id);
 
-        return $this->incrementVote($model, $vote);
+        return $this->entityVote($model, $vote);
     }
 
     public function actionAnswerVote($id, $vote)
     {
-        $model = $this->findQuestionModel($id);
+        $model = $this->findAnswerModel($id);
 
-        return $this->incrementVote($model, $vote);
+        return $this->entityVote($model, $vote);
     }
 
     public function actionAnswer($id)
@@ -152,18 +175,18 @@ class DefaultController extends Controller
     /**
      * Increment or decrement votes of model by given type
      * @param $model
-     * @param $type
+     * @param $type string can be 'up' or 'down'
      * @param string $format
      * @return Response
      */
-    protected function incrementVote($model, $type, $format = 'json')
+    protected function entityVote(ActiveRecord $model, $type, $format = 'json')
     {
         $data = ['status' => false];
 
-        if ($model && !Vote::isUserVoted()) {
+        if ($model && !Vote::isUserVoted($model)) {
             $data = [
                 'status' => true,
-                'votes' => Vote::increment($model, $type)
+                'votes' => Vote::process($model, $type)
             ];
         }
 
@@ -178,7 +201,7 @@ class DefaultController extends Controller
      */
     protected function isUserUnique()
     {
-        return true;
+        return !Yii::$app->user->isGuest;
     }
 
     /**

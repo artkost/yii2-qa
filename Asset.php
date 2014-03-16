@@ -20,14 +20,12 @@ class Asset extends AssetBundle
      * @inheritdoc
      */
     public $css = [
-        'bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
         'css/qa.css',
     ];
     /**
      * @inheritdoc
      */
     public $js = [
-        'bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js',
         'js/qa.js',
     ];
     /**
@@ -37,5 +35,6 @@ class Asset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
+        'artkost\qa\TypeaHeadAsset',
     ];
 }

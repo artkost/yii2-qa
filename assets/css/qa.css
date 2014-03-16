@@ -1,0 +1,9 @@
+@import "qa.index.css";
+@import "qa.view.css";
+@import "qa.question.form.css";
+
+.qa-index .question-edit,
+.qa-view .question-edit {
+    font-size: 10px;
+}
+

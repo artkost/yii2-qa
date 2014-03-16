@@ -1,0 +1,59 @@
+
+.qa-view .answer,
+.qa-view .question {
+    margin-left: 60px;
+}
+
+.qa-view .answer .created,
+.qa-view .question .created {
+    float: right;
+}
+
+.qa-view .answer-row {
+    min-height: 100px;
+    margin-top: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.qa-view .question-text,
+.qa-view .answer-text {
+    min-height: 100px;
+}
+
+.qa-view .answers-heading {
+    margin-top: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.qa-view .answers-title {
+    float: left;
+    margin: 0;
+}
+
+.qa-view .answers-tabs {
+    float: right;
+    border-bottom: none;
+}
+
+.qa-view .vote {
+    float: left;
+    width: 60px;
+    text-align: center;
+    color: #555;
+    line-height: 24px;
+}
+
+.qa-view .vote .vote-up {
+    margin-left: 2px;
+}
+
+.qa-view .vote .vote-up,
+.qa-view .vote .vote-down {
+    display: block;
+    font-size: 16px;
+}
+
+.qa-view .vote .vote-count {
+    color: #555;
+    font-size: 24px;
+}

@@ -30,6 +30,7 @@ class Tag extends \yii\db\ActiveRecord
     {
         return [
             [['name'], 'required'],
+            [['name'], 'string'],
         ];
     }
 
@@ -43,5 +44,31 @@ class Tag extends \yii\db\ActiveRecord
             'name' => 'Name',
             'frequency' => 'Frequency',
         ];
+    }
+
+    public static function string2Array($tags)
+    {
+        return preg_split('/\s*,\s*/',trim($tags),-1,PREG_SPLIT_NO_EMPTY);
+    }
+
+    public static function array2String($tags)
+    {
+        return implode(', ',$tags);
+    }
+
+    public static function suggestTags($keyword, $limit=20)
+    {
+        $tags = self::find()
+            ->where(['like', 'name', $keyword])
+            ->orderBy('frequency DESC, name')
+            ->limit($limit)
+            ->all();
+
+        $names=array();
+        foreach($tags as $tag) {
+            $names[]=$tag->name;
+        }
+
+        return $names;
     }
 }

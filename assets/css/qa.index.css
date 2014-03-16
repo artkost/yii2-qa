@@ -1,0 +1,68 @@
+
+.qa-index .cp {
+    width: 208px;
+    margin-right: 5px;
+}
+
+.qa-index .qa-list {
+    margin-top: 10px;
+}
+
+.qa-index .votes,
+.qa-index .status,
+.qa-index .views {
+    float: left;
+    margin: 0 5px 0 0;
+    width: 64px;
+    height: 54px;
+    text-align: center;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.qa-index .status.answered {
+    color: #71a311;
+    font-weight: normal;
+}
+
+.qa-index .status.answered-accepted {
+    background-color: #71A311;
+    color: #ffffff;
+}
+
+.qa-index .status.answered-accepted strong {
+    color: #ffffff;
+}
+
+.qa-index .status.unanswered {
+    color: #a52211;
+}
+
+.qa-index .mini-counts {
+    height: 25px;
+    font-size: 160%;
+    font-weight: normal;
+}
+
+.qa-index .votes {
+    color: #555;
+}
+
+.qa-index .views {
+    color: #999;
+}
+
+.qa-index .relativetime {
+    color: #999;
+}
+
+.qa-index .created {
+    float: right;
+}
+
+.qa-index .summary {
+    margin-left: 208px;
+}

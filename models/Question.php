@@ -2,7 +2,12 @@
 
 namespace artkost\qa\models;
 
+use yii\behaviors\AttributeBehavior;
+use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\helpers\Inflector;
+use Yii;
 
 /**
  * Question Model
@@ -24,7 +29,7 @@ use yii\behaviors\TimestampBehavior;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Question extends \yii\db\ActiveRecord
+class Question extends ActiveRecord
 {
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
@@ -44,6 +49,30 @@ class Question extends \yii\db\ActiveRecord
     {
         return [
             TimestampBehavior::className(),
+            [
+                'class' => AttributeBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'alias'
+                ],
+                'value' => function ($event) {
+                        return Inflector::slug($event->sender->title);
+                    }
+            ],
+            [
+                'class' => AttributeBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'status'
+                ],
+                'value' => function ($event) {
+                        return self::STATUS_PUBLISHED;
+                    }
+            ],
+            [
+                'class' => BlameableBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
+                ],
+            ]
         ];
     }
 
@@ -53,7 +82,40 @@ class Question extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'title', 'content', 'tags'], 'required'],
+            [['title', 'content', 'tags'], 'required'],
+            [['tags'], 'normalizeTags']
         ];
+    }
+
+    /**
+     * @return array a list of links that point to the post list filtered by every tag of this post
+     */
+    public function getTagsList()
+    {
+        return Tag::string2Array($this->tags);
+    }
+
+    /**
+     * Check if current user can edit this model
+     */
+    public function isAuthor()
+    {
+        return $this->user_id == Yii::$app->user->identity->id;
+    }
+
+    /**
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getAnswers()
+    {
+        return $this->hasMany(Answer::className(), ['question_id' => 'id']);
+    }
+
+    /**
+     * Normalizes the user-entered tags.
+     */
+    public function normalizeTags($attribute, $params)
+    {
+        $this->tags = Tag::array2String(array_unique(Tag::string2Array($this->tags)));
     }
 }

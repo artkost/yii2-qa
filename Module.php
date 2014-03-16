@@ -2,6 +2,8 @@
 
 namespace artkost\qa;
 
+use Yii;
+
 /**
  * This is the main module class for the QA module.
  *
@@ -43,7 +45,22 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public $controllerNamespace = 'artkost\qa\controllers';
+    public $controllerNamespace = '\artkost\qa\controllers';
 
     public $userClass = '\app\models\User';
+
+    public function init()
+    {
+        parent::init();
+
+        $i18n = Yii::$app->i18n;
+
+        if (!isset($i18n->translations['artkost\qa'])) {
+            $i18n->translations['artkost\qa'] = [
+                'class' => 'yii\i18n\PhpMessageSource',
+                'sourceLanguage' => 'en',
+                'basePath' => '@artkost/qa/messages',
+            ];
+        }
+    }
 }

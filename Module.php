@@ -47,7 +47,17 @@ class Module extends \yii\base\Module
      */
     public $controllerNamespace = '\artkost\qa\controllers';
 
+    /**
+     * User model class
+     * @var string
+     */
     public $userClass = '\app\models\User';
+
+    /**
+     * Function name in user model, or callable function
+     * @var string|callable
+     */
+    public $userName = 'getId';
 
     public function init()
     {
@@ -62,5 +72,10 @@ class Module extends \yii\base\Module
                 'basePath' => '@artkost/qa/messages',
             ];
         }
+    }
+
+    public function getUserName()
+    {
+
     }
 }

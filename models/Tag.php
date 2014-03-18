@@ -2,6 +2,8 @@
 
 namespace artkost\qa\models;
 
+use artkost\qa\ActiveRecord;
+
 /**
  * Tag Model
  * @package artkost\qa\models
@@ -13,7 +15,7 @@ namespace artkost\qa\models;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Tag extends \yii\db\ActiveRecord
+class Tag extends ActiveRecord
 {
     /**
      * @inheritdoc

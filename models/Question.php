@@ -2,12 +2,12 @@
 
 namespace artkost\qa\models;
 
+use artkost\qa\ActiveRecord;
+use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\helpers\Inflector;
-use Yii;
 
 /**
  * Question Model
@@ -38,7 +38,7 @@ class Question extends ActiveRecord
      * Old tags populated after find record
      * @var string
      */
-    protected $_oldTags='';
+    protected $_oldTags = '';
 
     /**
      * @inheritdoc
@@ -99,7 +99,7 @@ class Question extends ActiveRecord
     public function afterFind()
     {
         parent::afterFind();
-        $this->_oldTags=$this->tags;
+        $this->_oldTags = $this->tags;
     }
 
     /**
@@ -156,9 +156,7 @@ class Question extends ActiveRecord
 
     public function getUser()
     {
-        $userClass = \app\models\User::className();
-
-        return $this->hasOne($userClass, ['user_id' => 'id']);
+        return $this->hasOne($this->getModule()->userClass, ['user_id' => 'id']);
     }
 
     /**

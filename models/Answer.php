@@ -4,7 +4,7 @@ namespace artkost\qa\models;
 
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use artkost\qa\ActiveRecord;
 use yii\db\ActiveQuery;
 use Yii;
 
@@ -74,6 +74,11 @@ class Answer extends ActiveRecord
             'content' => 'Content',
             'status' => 'Status',
         ];
+    }
+
+    public function getUser()
+    {
+        return $this->hasOne($this->getModule()->userClass, ['user_id' => 'id']);
     }
 
     public function getUpdated()

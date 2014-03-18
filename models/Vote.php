@@ -2,12 +2,12 @@
 
 namespace artkost\qa\models;
 
-use Yii;
+use artkost\qa\ActiveRecord;
 use yii\base\UnknownClassException;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use Yii;
 
 /**
  * Class Votes

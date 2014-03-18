@@ -35,6 +35,5 @@ class Asset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
-        'artkost\qa\TypeaHeadAsset',
     ];
 }

@@ -84,6 +84,8 @@ class DefaultController extends Controller
         /** @var Question $model */
         $model = $this->findQuestionModel($id);
 
+        return dump($model->getModule());
+
         if ($this->isUserUnique()) {
             $model->updateCounters(['views' => 1]);
         }

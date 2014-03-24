@@ -97,7 +97,7 @@ class Vote extends ActiveRecord
         $userId = Yii::$app->user->id;
         return self::find()->where([
             'user_id' => $userId,
-            'entity' => self::getModelEntity($model),
+            'entity' => self::getModelEntityType($model),
             'entity_id' => $model->id
         ])->exists();
     }
@@ -129,7 +129,7 @@ class Vote extends ActiveRecord
 
             $vote = new self(['entity_id' => $model->id, 'vote' => $value]);
 
-            $vote->entity = self::getModelEntity($model);
+            $vote->entity = self::getModelEntityType($model);
 
             if ($vote->save() && $model->save()) {
                 return $model->votes;
@@ -145,7 +145,7 @@ class Vote extends ActiveRecord
      * @throws UnknownClassException
      * @return string
      */
-    protected static function getModelEntity($model)
+    protected static function getModelEntityType($model)
     {
         if ($model instanceof Question) {
             return self::ENTITY_QUESTION;

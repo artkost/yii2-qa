@@ -27,6 +27,7 @@ class ActiveRecord extends \yii\db\ActiveRecord
         if (self::$module == null) {
 
             $modules = Yii::$app->getModules(true);
+
             foreach ($modules as $id => $module) {
                 if ($module instanceof Module) {
                     self::$module = $module;
@@ -41,5 +42,17 @@ class ActiveRecord extends \yii\db\ActiveRecord
         }
 
         return self::$module;
+    }
+
+    /**
+     * Alias of [[Module::t()]]
+     * @param $message
+     * @param array $params
+     * @param null $language
+     * @return string
+     */
+    public function t($message, $params = [], $language = null)
+    {
+        return Module::t($message, $params, $language);
     }
 }

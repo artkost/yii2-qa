@@ -94,6 +94,21 @@ class Question extends ActiveRecord
     }
 
     /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => $this->t('ID'),
+            'title' => $this->t('Title'),
+            'alias' => $this->t('Alias'),
+            'content' => $this->t('Content'),
+            'tags' => $this->t('Tags'),
+            'status' => $this->t('Status'),
+        ];
+    }
+
+    /**
      * This is invoked when a record is populated with data from a find() call.
      */
     public function afterFind()
@@ -138,6 +153,11 @@ class Question extends ActiveRecord
         return Yii::$app->formatter->asTime($this->created_at);
     }
 
+    public function getUserName()
+    {
+        return $this->user ? $this->getModule()->getUserName($this->user) : $this->user_id;
+    }
+
     /**
      * Check if current user can edit this model
      */
@@ -147,6 +167,7 @@ class Question extends ActiveRecord
     }
 
     /**
+     * Answer Relation
      * @return \yii\db\ActiveQueryInterface
      */
     public function getAnswers()
@@ -154,9 +175,13 @@ class Question extends ActiveRecord
         return $this->hasMany(Answer::className(), ['question_id' => 'id']);
     }
 
+    /**
+     * User Relation
+     * @return \yii\db\ActiveQueryInterface
+     */
     public function getUser()
     {
-        return $this->hasOne($this->getModule()->userClass, ['user_id' => 'id']);
+        return $this->hasOne($this->getModule()->userClass, ['id' => 'user_id']);
     }
 
     /**

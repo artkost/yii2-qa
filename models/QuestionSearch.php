@@ -17,7 +17,7 @@ class QuestionSearch extends Model
      */
     public function search($params)
     {
-        $query = Question::find();
+        $query = Question::find()->with('user');
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);

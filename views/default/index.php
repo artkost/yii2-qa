@@ -1,20 +1,19 @@
 <?php
-
-use yii\helpers\Url;
-use yii\widgets\LinkPager;
-
 /**
  * @var \artkost\qa\models\Question[] $models
  * @var \yii\data\ActiveDataProvider $dataProvider
  */
+
+use artkost\qa\Module;
+
 $models = $dataProvider->getModels();
 
-$this->title = 'Questions';
-
+$this->title = Module::t('Questions');
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="qa-index container">
     <div class="row">
-        <a class="btn btn-primary" href="<?= Url::toRoute(['ask']) ?>">Ask a Question</a>
+        <a class="btn btn-primary" href="<?= Module::url(['ask']) ?>"><?= Module::t('Ask a Question') ?></a>
     </div>
     <div class="row">
         <div class="qa-list list-group">
@@ -23,22 +22,22 @@ $this->title = 'Questions';
                     <div class="cp pull-left">
                         <div class="votes pull-left">
                             <div class="mini-counts"><?= $model->votes ?></div>
-                            <div>votes</div>
+                            <div><?= Module::t('votes')?></div>
                         </div>
                         <div class="status pull-left unanswered">
                             <div class="mini-counts"><?= $model->answers ?></div>
-                            <div>answers</div>
+                            <div><?= Module::t('answers')?></div>
                         </div>
                         <div class="views pull-left">
                             <div class="mini-counts"><?= $model->views ?></div>
-                            <div>views</div>
+                            <div><?= Module::t('views') ?></div>
                         </div>
                     </div>
                     <div class="summary">
                         <h4 class="list-group-item-heading">
-                            <a href="<?= Url::toRoute(['view', 'id' => $model->id, 'alias' => $model->alias]) ?>"
+                            <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias]) ?>"
                                class="question-hyperlink" title=""><?= $model->title ?></a>
-                            <?= $this->render('_edit_links', compact('model')) ?>
+                            <?= $this->render('_edit_links', ['model' => $model]) ?>
                         </h4>
 
                         <div class="tags">
@@ -50,9 +49,7 @@ $this->title = 'Questions';
             <?php endforeach; ?>
         </div>
     </div>
-    <div class="row">
-        <?= LinkPager::widget(['pagination' => $dataProvider->getPagination()]) ?>
-    </div>
+    <?= $this->render('_pager', ['dataProvider' => $dataProvider]) ?>
 </div>
 
 

@@ -1,8 +1,8 @@
 <?php
+use artkost\qa\Module;
 
-$this->title = 'Ask a Question';
+$this->title = Module::t('Ask a Question');
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
 
 <div class="container">

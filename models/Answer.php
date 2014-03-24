@@ -70,25 +70,46 @@ class Answer extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'content' => 'Content',
-            'status' => 'Status',
+            'id' => $this->t('ID'),
+            'content' => $this->t('Content'),
+            'status' => $this->t('Status'),
         ];
     }
 
+    /**
+     * User Relation
+     * @return \yii\db\ActiveQueryInterface
+     */
     public function getUser()
     {
-        return $this->hasOne($this->getModule()->userClass, ['user_id' => 'id']);
+        return $this->hasOne($this->getModule()->userClass, ['id' => 'user_id']);
     }
 
+    /**
+     * Formatted date
+     * @return string
+     */
     public function getUpdated()
     {
         return Yii::$app->formatter->asTime($this->updated_at);
     }
 
+    /**
+     * Formatted date
+     * @return string
+     */
     public function getCreated()
     {
         return Yii::$app->formatter->asTime($this->created_at);
+    }
+
+    /**
+     * Formatted user
+     * @return int
+     */
+    public function getUserName()
+    {
+        return $this->user ? $this->getModule()->getUserName($this->user) : $this->user_id;
     }
 
     /**

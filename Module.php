@@ -2,6 +2,8 @@
 
 namespace artkost\qa;
 
+use yii\base\InvalidCallException;
+use yii\helpers\Url;
 use Yii;
 
 /**
@@ -54,10 +56,10 @@ class Module extends \yii\base\Module
     public $userClass = '\app\models\User';
 
     /**
-     * Function name in user model, or callable function
+     * Formatter function name in user model, or callable
      * @var string|callable
      */
-    public $userName = 'getId';
+    public $userNameFormatter = 'getId';
 
     public function init()
     {
@@ -74,8 +76,38 @@ class Module extends \yii\base\Module
         }
     }
 
-    public function getUserName()
+    /**
+     * Alias function for [[Yii::t()]]
+     * @param $message
+     * @param array $params
+     * @param null $language
+     * @return string
+     */
+    public static function t($message, $params = [], $language = null)
     {
+        return Yii::t('artkost\qa', $message, $params, $language);
+    }
 
+    /**
+     * Alias function for [[Url::toRoute()]]
+     * @param $route
+     * @param bool $scheme
+     * @return string
+     */
+    public static function url($route, $scheme = false)
+    {
+        return Url::toRoute($route, $scheme);
+    }
+
+    /**
+     * @param \app\models\User $model
+     * @return string
+     * @throws InvalidCallException
+     */
+    public function getUserName($model)
+    {
+        //if (method_exists($model, $this->userNameFormatter)) {
+            return call_user_func([$model, $this->userNameFormatter]);
+        //} else throw new InvalidCallException('Invalid userNameFormatter function');
     }
 }

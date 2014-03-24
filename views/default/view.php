@@ -3,13 +3,14 @@
  * @var \artkost\qa\models\Question $model
  * @var \yii\data\ActiveDataProvider $answerDataProvider
  * @var string $answerOrder
+ * @var \artkost\qa\models\Answer $answer
  * @var \yii\web\View $this
  */
 
-use yii\helpers\Url;
-use yii\widgets\LinkPager;
+use artkost\qa\Module;
 
 $this->title = $model->title;
+$this->params['breadcrumbs'][] = ['label' => Module::t('Questions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $answerOrders = [
@@ -48,18 +49,18 @@ $answerOrders = [
         <div class="col-lg-12">
 
             <div class="answers-heading clearfix">
-                <h3 class="answers-title"><?= Yii::t('artkost\qa', '{n, plural, =0{No Answers yet} =1{One Answer} other{# Answers}}', ['n' => $answerDataProvider->getTotalCount()]); ?></h3>
+                <h3 class="answers-title"><?= Module::t('{n, plural, =0{No Answers yet} =1{One Answer} other{# Answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
                 <ul class="answers-tabs nav nav-tabs">
                     <?php foreach ($answerOrders as $aId => $aOrder): ?>
                         <li <?= ($aOrder == $answerOrder) ? 'class="active"' : '' ?> >
-                            <a href="<?= Url::toRoute(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>"><?= Yii::t('artkost\qa', $aId) ?></a>
+                            <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>"><?= Module::t($aId) ?></a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
             </div>
 
             <div class="answers-list">
-                <?php foreach ($answerDataProvider->getModels() as $row): ?>
+                <?php foreach ($answerDataProvider->models as $row): ?>
                     <div class="answer-row">
 
                         <?= $this->render('_vote', ['model' => $row, 'route' => 'answer-vote']) ?>
@@ -76,12 +77,12 @@ $answerOrders = [
             </div>
 
             <div class="answers-pager">
-                <?= LinkPager::widget(['pagination' => $answerDataProvider->getPagination()]) ?>
+                <?= $this->render('_pager', ['dataProvider' => $answerDataProvider]) ?>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <?= $this->render('_answer_form', ['model' => $answer, 'action' => Url::toRoute(['answer', 'id' => $model->id])]); ?>
+        <?= $this->render('_answer_form', ['model' => $answer, 'action' => Module::url(['answer', 'id' => $model->id])]); ?>
     </div>
 </div>

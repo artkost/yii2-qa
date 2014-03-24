@@ -2,21 +2,21 @@
 
 namespace artkost\qa\controllers;
 
+use artkost\qa\ActiveRecord;
 use artkost\qa\Asset;
 use artkost\qa\models\Answer;
 use artkost\qa\models\Question;
 use artkost\qa\models\QuestionSearch;
 use artkost\qa\models\Tag;
 use artkost\qa\models\Vote;
+use Yii;
 use yii\data\ActiveDataProvider;
-use yii\db\ActiveRecord;
 use yii\web\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\VerbFilter;
-use Yii;
 
 class DefaultController extends Controller
 {
@@ -28,7 +28,7 @@ class DefaultController extends Controller
     public function init()
     {
         parent::init();
-        Asset::register($this->getView());
+        Asset::register($this->view);
     }
 
     public function behaviors()
@@ -71,39 +71,43 @@ class DefaultController extends Controller
 
     public function actionTagSuggest()
     {
+        $tags = [];
         if (isset($_GET['q']) && ($keyword = trim($_GET['q'])) !== '') {
-            $tags = Tag::suggestTags($keyword);
-            if ($tags !== array()) {
-                return implode("\n", $tags);
-            }
+            $tags = Tag::suggest($keyword);
         }
+
+        return new Response([
+            'data' => $tags,
+        ]);
     }
 
     public function actionView($id)
     {
         /** @var Question $model */
-        $model = $this->findQuestionModel($id);
+        $model = Question::find()->with('user')->where(['id' => $id])->one();
 
-        return dump($model->getModule());
+        if ($model) {
+            if ($this->isUserUnique()) {
+                $model->updateCounters(['views' => 1]);
+            }
 
-        if ($this->isUserUnique()) {
-            $model->updateCounters(['views' => 1]);
+            $answer = new Answer;
+
+            $query = Answer::find()->with('user');
+
+            $answerOrder = Answer::applyOrder($query, Yii::$app->request->get('answers', 'votes'));
+
+            $answerDataProvider = new ActiveDataProvider([
+                'query' => $query->where(['question_id' => $model->id]),
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+
+            return $this->render('view', compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
-        $answer = new Answer;
-
-        $query = Answer::find();
-
-        $answerOrder = Answer::applyOrder($query, Yii::$app->request->get('answers', 'votes'));
-
-        $answerDataProvider = new ActiveDataProvider([
-            'query' => $query->where(['question_id' => $model->id]),
-            'pagination' => [
-                'pageSize' => 20,
-            ],
-        ]);
-
-        return $this->render('view', compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
     }
 
     public function actionEdit($id)

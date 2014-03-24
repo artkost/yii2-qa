@@ -1,8 +1,9 @@
 <?php
+use artkost\qa\Module;
 
-$this->title = 'Edit ' . $model->title;
+$this->title = Module::t('Edit {title}', ['title' => $model->title]);
+$this->params['breadcrumbs'][] = ['label' => Module::t('Questions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
 
 <div class="container">

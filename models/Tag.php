@@ -42,9 +42,9 @@ class Tag extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'frequency' => 'Frequency',
+            'id' => $this->t('ID'),
+            'name' => $this->t('Name'),
+            'frequency' => $this->t('Frequency'),
         ];
     }
 
@@ -119,7 +119,7 @@ class Tag extends ActiveRecord
      * @param int $limit
      * @return array
      */
-    public static function suggestTags($keyword, $limit = 20)
+    public static function suggest($keyword, $limit = 20)
     {
         $tags = self::find()
             ->where(['like', 'name', $keyword])

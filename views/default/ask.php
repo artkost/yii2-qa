@@ -2,6 +2,7 @@
 use artkost\qa\Module;
 
 $this->title = Module::t('Ask a Question');
+$this->params['breadcrumbs'][] = ['label' => Module::t('Questions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

@@ -50,6 +50,8 @@ $answerOrders = [
 
             <div class="answers-heading clearfix">
                 <h3 class="answers-title"><?= Module::t('{n, plural, =0{No Answers yet} =1{One Answer} other{# Answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
+
+                <?php if ($answerDataProvider->totalCount): ?>
                 <ul class="answers-tabs nav nav-tabs">
                     <?php foreach ($answerOrders as $aId => $aOrder): ?>
                         <li <?= ($aOrder == $answerOrder) ? 'class="active"' : '' ?> >
@@ -57,6 +59,7 @@ $answerOrders = [
                         </li>
                     <?php endforeach; ?>
                 </ul>
+                <?php endif; ?>
             </div>
 
             <div class="answers-list">
@@ -66,6 +69,7 @@ $answerOrders = [
                         <?= $this->render('_vote', ['model' => $row, 'route' => 'answer-vote']) ?>
 
                         <div class="answer clearfix">
+                            <?= $this->render('_edit_links', ['model' => $row]) ?>
                             <div class="answer-text">
                                 <?= $row->content ?>
                             </div>

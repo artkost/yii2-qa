@@ -16,7 +16,7 @@ $form = ActiveForm::begin(['id' => 'question-form']);
     ->hint(Module::t('Comma separated list of tags')) ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton(Module::t($model->isNewRecord ? 'Create' : 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
 <? ActiveForm::end(); ?>

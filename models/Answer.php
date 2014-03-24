@@ -113,6 +113,14 @@ class Answer extends ActiveRecord
     }
 
     /**
+     * Check if current user can edit this model
+     */
+    public function isAuthor()
+    {
+        return $this->user_id == Yii::$app->user->id;
+    }
+
+    /**
      * Apply possible answers order to query
      * @param ActiveQuery $query
      * @param $order

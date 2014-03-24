@@ -40,6 +40,10 @@ return [
 ];
 ```
 
+Install Migrations
+
+```php yii migrate --migrationPath=@artkost/qa/migrations```
+
 You can then access QA through the following URL:
 
 ```

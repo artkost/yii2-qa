@@ -28,18 +28,19 @@ $answerOrders = [
             <?= $this->render('_vote', ['model' => $model, 'route' => 'question-vote']) ?>
 
             <div class="question">
-                <h1>
-                    <?= $this->title ?>
-                    <?= $this->render('_edit_links', ['model' => $model]) ?>
-                </h1>
+                <h1><?= $this->title ?></h1>
 
                 <div class="question-text">
                     <?= $model->content ?>
                 </div>
-                <div class="question-taglist">
+                <div class="question-tags">
                     <?= $this->render('_tags', ['model' => $model]) ?>
                 </div>
-                <?= $this->render('_created', ['model' => $model]) ?>
+                <div class="question-meta">
+                    <?= $this->render('_edit_links', ['model' => $model]) ?>
+                    <?= $this->render('_created', ['model' => $model]) ?>
+                </div>
+
             </div>
         </div>
     </div>
@@ -67,13 +68,16 @@ $answerOrders = [
                     <div class="answer-row">
 
                         <?= $this->render('_vote', ['model' => $row, 'route' => 'answer-vote']) ?>
-
                         <div class="answer clearfix">
-                            <?= $this->render('_edit_links', ['model' => $row]) ?>
                             <div class="answer-text">
                                 <?= $row->content ?>
                             </div>
-                            <?= $this->render('_created', ['model' => $row]) ?>
+
+                            <div class="answer-meta">
+                                <?= $this->render('_edit_links', ['model' => $row]) ?>
+                                <?= $this->render('_created', ['model' => $row]) ?>
+                            </div>
+
                         </div>
                     </div>
                 <?php endforeach; ?>

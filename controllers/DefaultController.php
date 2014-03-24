@@ -189,7 +189,7 @@ class DefaultController extends Controller
     {
         $data = ['status' => false];
 
-        if ($model && !Vote::isUserVoted($model)) {
+        if ($model && !Vote::isUserCan($model)) {
             $data = [
                 'status' => true,
                 'votes' => Vote::process($model, $type)

@@ -2,11 +2,12 @@
 @import "qa.view.css";
 @import "qa.question.form.css";
 
-.question-delete,
-.question-edit {
-    font-size: 10px;
+.answer .created,
+.question .created {
+    padding: 0 10px;
 }
 
-.created .time {
+.answer .time,
+.question .time {
     color: #999;
 }

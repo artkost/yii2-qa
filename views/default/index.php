@@ -37,13 +37,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         <h4 class="list-group-item-heading">
                             <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias]) ?>"
                                class="question-hyperlink" title=""><?= $model->title ?></a>
-                            <?= $this->render('_edit_links', ['model' => $model]) ?>
+
                         </h4>
 
                         <div class="tags">
                             <?= $this->render('_tags', ['model' => $model]) ?>
                         </div>
-                        <?= $this->render('_created', ['model' => $model]) ?>
+                        <div class="question-meta">
+                            <?= $this->render('_edit_links', ['model' => $model]) ?>
+                            <?= $this->render('_created', ['model' => $model]) ?>
+                        </div>
+
                     </div>
                 </div>
             <?php endforeach; ?>

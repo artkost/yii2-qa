@@ -92,14 +92,19 @@ class Vote extends ActiveRecord
     /**
      * Check if current user has access to vote
      */
-    public static function isUserVoted(ActiveRecord $model)
+    public static function isUserCan(ActiveRecord $model)
     {
         $userId = Yii::$app->user->id;
-        return self::find()->where([
-            'user_id' => $userId,
-            'entity' => self::getModelEntityType($model),
-            'entity_id' => $model->id
-        ])->exists();
+
+        if ($model->hasAttribute('user_id') && $model->user_id == $userId) {
+            return false;
+        } else {
+            return !self::find()->where([
+                'user_id' => $userId,
+                'entity' => self::getModelEntityType($model),
+                'entity_id' => $model->id
+            ])->exists();
+        }
     }
 
     /**

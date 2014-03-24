@@ -4,20 +4,25 @@
     margin-left: 60px;
 }
 
-.qa-view .answer .created,
-.qa-view .question .created {
+.qa-view .answer .answer-meta,
+.qa-view .question .question-meta {
     float: right;
 }
 
 .qa-view .answer-row {
     min-height: 100px;
     margin-top: 10px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #eee;
 }
 
 .qa-view .question-text,
 .qa-view .answer-text {
     min-height: 100px;
+}
+
+.qa-view .answer-edit {
+    float: right;
 }
 
 .qa-view .answers-heading {
@@ -54,6 +59,7 @@
 }
 
 .qa-view .vote .vote-count {
+    display: block;
     color: #555;
     font-size: 24px;
 }

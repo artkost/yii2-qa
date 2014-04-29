@@ -11,12 +11,12 @@ use artkost\qa\models\Tag;
 use artkost\qa\models\Vote;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\web\AccessControl;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\web\VerbFilter;
+use yii\filters\VerbFilter;
 
 class DefaultController extends Controller
 {

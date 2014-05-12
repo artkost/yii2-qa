@@ -166,6 +166,22 @@ class Question extends ActiveRecord
         return $this->user_id == Yii::$app->user->id;
     }
 
+    public function isFavorite($user = false)
+    {
+        $user = ($user) ? $user : Yii::$app->user;
+
+        return Favorite::find()->where(['user_id' => $user->id, 'question_id' => $this->id])->exists();
+    }
+
+    public function toggleFavorite()
+    {
+        if ($this->isFavorite()) {
+            return Favorite::remove($this->id);
+        } else {
+            return Favorite::add($this->id);
+        }
+    }
+
     /**
      * Answer Relation
      * @return \yii\db\ActiveQueryInterface
@@ -182,6 +198,24 @@ class Question extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne($this->getModule()->userClass, ['id' => 'user_id']);
+    }
+
+    /**
+     * Favorite Relation
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getFavorite()
+    {
+        return $this->hasOne(Favorite::className(), ['question_id' => 'id']);
+    }
+
+    /**
+     * Favorite Relation
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getFavorites()
+    {
+        return $this->hasMany(Favorite::className(), ['question_id' => 'id']);
     }
 
     /**

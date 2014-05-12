@@ -2,6 +2,7 @@
 
 namespace artkost\qa\controllers;
 
+use Yii;
 use artkost\qa\ActiveRecord;
 use artkost\qa\Asset;
 use artkost\qa\models\Answer;
@@ -9,7 +10,7 @@ use artkost\qa\models\Question;
 use artkost\qa\models\QuestionSearch;
 use artkost\qa\models\Tag;
 use artkost\qa\models\Vote;
-use Yii;
+use artkost\qa\models\Favorite;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -50,7 +51,7 @@ class DefaultController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['ask', 'answer', 'edit', 'delete', 'question-vote', 'answer-vote'],
+                        'actions' => ['ask', 'answer', 'edit', 'delete', 'my', 'favorite', 'question-favorite', 'question-vote', 'answer-vote'],
                         'roles' => ['@']
                     ],
                     [
@@ -65,8 +66,28 @@ class DefaultController extends Controller
     {
         $searchModel = new  QuestionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        $models = $dataProvider->getModels();
 
-        return $this->render('index', compact('searchModel', 'dataProvider'));
+        return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
+    }
+
+    public function actionFavorite()
+    {
+        $searchModel = new  QuestionSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        $dataProvider->query->joinWith('favorites', true, 'RIGHT JOIN')->where([Question::tableName().'.user_id' => Yii::$app->user->id]);
+        $models = $dataProvider->getModels();
+
+        return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
+    }
+
+    public function actionMy()
+    {
+        $searchModel = new  QuestionSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
+        $dataProvider->query->where(['user_id' => Yii::$app->user->id]);
+        $models = $dataProvider->getModels();
+        return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
     }
 
     public function actionTagSuggest()
@@ -87,7 +108,7 @@ class DefaultController extends Controller
         $model = Question::find()->with('user')->where(['id' => $id])->one();
 
         if ($model) {
-            if ($this->isUserUnique()) {
+            if ($this->module->isUserUnique()) {
                 $model->updateCounters(['views' => 1]);
             }
 
@@ -152,6 +173,27 @@ class DefaultController extends Controller
         }
     }
 
+    public function actionQuestionFavorite($id)
+    {
+        /** @var Question $model */
+        $model = Question::find()->with('favorite')->where(['id' => $id])->one();
+
+        $response = [
+            'data' => ['status' => false],
+            'format' => 'json'
+        ];
+
+        if ($model && $status = $model->toggleFavorite()) {
+            $response['data']['status'] = $status;
+        }
+
+        if (Yii::$app->request->isAjax) {
+            return new Response($response);
+        }
+
+        return $this->refresh();
+    }
+
     public function actionQuestionVote($id, $vote)
     {
         $model = $this->findQuestionModel($id);
@@ -192,22 +234,20 @@ class DefaultController extends Controller
         if ($model && !Vote::isUserCan($model)) {
             $data = [
                 'status' => true,
-                'votes' => Vote::process($model, $type)
+                'data' => [
+                    'votes' => Vote::process($model, $type)
+                ]
             ];
         }
 
-        return new Response([
-            'data' => $data,
-            'format' => $format
-        ]);
-    }
+        if (Yii::$app->request->isAjax) {
+            return new Response([
+                'data' => $data,
+                'format' => $format
+            ]);
+        }
 
-    /**
-     * Check if is given user unique
-     */
-    protected function isUserUnique()
-    {
-        return !Yii::$app->user->isGuest;
+        return $this->refresh();
     }
 
     /**

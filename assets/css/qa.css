@@ -1,13 +1,109 @@
 @import "qa.index.css";
 @import "qa.view.css";
-@import "qa.question.form.css";
+@import "qa.edit.css";
 
-.answer .created,
-.question .created {
+
+.qa-list {
+    margin-top: 10px;
+}
+
+.qa-item-not-found {
+    text-align: center;
+}
+
+.qa-panels {
+    float: left;
+    margin-right: 5px;
+}
+
+.qa-panel {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 5px 0 0;
+    width: 64px;
+    height: 54px;
+    text-align: center;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.qa-panel.status-answered {
+    color: #71a311;
+    font-weight: normal;
+}
+
+.qa-panel.status-answered-accepted {
+    background-color: #71A311;
+    color: #ffffff;
+}
+
+.qa-panel.status-answered-accepted strong {
+    color: #ffffff;
+}
+
+.qa-panel.status-unanswered {
+    color: #a52211;
+}
+
+.qa-panel .mini-counts {
+    height: 25px;
+    font-size: 160%;
+    font-weight: normal;
+}
+
+.qa-panel .votes {
+    color: #555;
+}
+
+.qa-panel .views {
+    color: #999;
+}
+
+.qa-vote {
+    color: #555;
+    line-height: 24px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.qa-vote-up {
+    margin-left: 2px;
+}
+
+.qa-vote-up,
+.qa-vote-down {
+    display: block;
+    font-size: 16px;
+}
+
+.qa-vote-count {
+    display: block;
+    color: #555;
+    font-size: 24px;
+}
+
+.qa-favorite {
+    font-size: 32px;
+    text-align: center;
+}
+
+.qa-favorite-active .qa-favorite-link:hover,
+.qa-favorite-link {
+    color: #666;
+}
+
+.qa-favorite-active .qa-favorite-link,
+.qa-favorite-link:hover {
+    color: #f0ad4e;
+}
+
+.qa-created {
     padding: 0 10px;
 }
 
-.answer .time,
-.question .time {
+.qa-time {
     color: #999;
 }

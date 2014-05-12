@@ -20,77 +20,72 @@ $answerOrders = [
 ];
 
 ?>
-
-<div class="qa-view container">
-    <div class="row">
-        <div class="col-lg-12">
-
-            <?= $this->render('_vote', ['model' => $model, 'route' => 'question-vote']) ?>
-
-            <div class="question">
-                <h1><?= $this->title ?></h1>
-
-                <div class="question-text">
-                    <?= $model->content ?>
+<div class="container">
+    <div class="qa-view row">
+        <div class="col-md-12">
+            <div class="qa-view-question">
+                <div class="qa-view-actions">
+                    <?= $this->render('parts/vote', ['model' => $model, 'route' => 'question-vote']) ?>
+                    <?= $this->render('parts/favorite', ['model' => $model]) ?>
                 </div>
-                <div class="question-tags">
-                    <?= $this->render('_tags', ['model' => $model]) ?>
-                </div>
-                <div class="question-meta">
-                    <?= $this->render('_edit_links', ['model' => $model]) ?>
-                    <?= $this->render('_created', ['model' => $model]) ?>
-                </div>
+                <div class="qa-view-body">
+                    <h1 class="qa-view-title"><?= $this->title ?></h1>
 
+                    <div class="qa-view-text">
+                        <?= $model->content ?>
+                    </div>
+
+                    <div class="qa-view-meta">
+                        <?= $this->render('parts/tags-list', ['model' => $model]) ?>
+                        <?= $this->render('parts/edit-links', ['model' => $model]) ?>
+                        <?= $this->render('parts/created', ['model' => $model]) ?>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row">
-
-        <div class="col-lg-12">
-
-            <div class="answers-heading clearfix">
-                <h3 class="answers-title"><?= Module::t('{n, plural, =0{No Answers yet} =1{One Answer} other{# Answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
+            <div class="qa-view-answers-heading clearfix">
+                <h3 class="qa-view-title"><?= Module::t('{n, plural, =0{No Answers yet} =1{One Answer} other{# Answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
 
                 <?php if ($answerDataProvider->totalCount): ?>
-                <ul class="answers-tabs nav nav-tabs">
-                    <?php foreach ($answerOrders as $aId => $aOrder): ?>
-                        <li <?= ($aOrder == $answerOrder) ? 'class="active"' : '' ?> >
-                            <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>"><?= Module::t($aId) ?></a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                    <ul class="qa-view-tabs nav nav-tabs">
+                        <?php foreach ($answerOrders as $aId => $aOrder): ?>
+                            <li <?= ($aOrder == $answerOrder) ? 'class="active"' : '' ?> >
+                                <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>"><?= Module::t($aId) ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 <?php endif; ?>
             </div>
 
-            <div class="answers-list">
+            <div class="qa-view-answers">
                 <?php foreach ($answerDataProvider->models as $row): ?>
-                    <div class="answer-row">
-
-                        <?= $this->render('_vote', ['model' => $row, 'route' => 'answer-vote']) ?>
-                        <div class="answer clearfix">
-                            <div class="answer-text">
+                    <div class="qa-view-answer">
+                        <div class="qa-view-actions">
+                            <?= $this->render('parts/vote', ['model' => $row, 'route' => 'answer-vote']) ?>
+                        </div>
+                        <div class="qa-view-body">
+                            <div class="qa-view-text">
                                 <?= $row->content ?>
                             </div>
 
-                            <div class="answer-meta">
-                                <?= $this->render('_edit_links', ['model' => $row]) ?>
-                                <?= $this->render('_created', ['model' => $row]) ?>
+                            <div class="qa-view-meta">
+                                <?= $this->render('parts/edit-links', ['model' => $row]) ?>
+                                <?= $this->render('parts/created', ['model' => $row]) ?>
                             </div>
-
                         </div>
                     </div>
                 <?php endforeach; ?>
 
             </div>
 
-            <div class="answers-pager">
-                <?= $this->render('_pager', ['dataProvider' => $answerDataProvider]) ?>
+            <div class="qa-view-pager">
+                <?= $this->render('parts/pager', ['dataProvider' => $answerDataProvider]) ?>
+            </div>
+
+            <div class="qa-view-answer-form">
+                <?= $this->render('parts/form-answer', ['model' => $answer, 'action' => Module::url(['answer', 'id' => $model->id])]); ?>
+
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <?= $this->render('_answer_form', ['model' => $answer, 'action' => Module::url(['answer', 'id' => $model->id])]); ?>
     </div>
 </div>

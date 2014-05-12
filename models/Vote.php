@@ -3,11 +3,11 @@
 namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
+use Yii;
 use yii\base\UnknownClassException;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use Yii;
 
 /**
  * Class Votes
@@ -67,18 +67,14 @@ class Vote extends ActiveRecord
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'created_ip'
                 ],
-                'value' => function ($event) {
-                        return ip2long(Yii::$app->request->getUserIP());
-                    }
+                'value' => function ($event) { return ip2long(Yii::$app->request->getUserIP()); }
             ],
             [
                 'class' => AttributeBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_AFTER_FIND => 'created_ip'
                 ],
-                'value' => function ($event) {
-                        return long2ip($event->sender->created_ip);
-                    }
+                'value' => function ($event) { return long2ip($event->sender->created_ip); }
             ],
             [
                 'class' => BlameableBehavior::className(),
@@ -110,7 +106,7 @@ class Vote extends ActiveRecord
     /**
      * Increment votes for given model
      * @param ActiveRecord $model
-     * @param $type
+     * @param string $type of vote, up or down
      * @return int|mixed
      */
     public static function process(ActiveRecord $model, $type)

@@ -37,7 +37,7 @@ use Yii;
  * ],
  * ~~~
  *
- * You can then access Qa via URL: `http://localhost/path/to/index.php/gii`
+ * You can then access QA via URL: `http://localhost/path/to/index.php/qa`
  *
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
@@ -110,4 +110,13 @@ class Module extends \yii\base\Module
             return call_user_func([$model, $this->userNameFormatter]);
         //} else throw new InvalidCallException('Invalid userNameFormatter function');
     }
+
+    /**
+     * Check if is given user unique
+     */
+    public function isUserUnique()
+    {
+        return !Yii::$app->user->isGuest;
+    }
+
 }

@@ -8,6 +8,7 @@
  */
 
 use artkost\qa\Module;
+use yii\helpers\Html;
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Module::t('Questions'), 'url' => ['index']];
@@ -29,10 +30,10 @@ $answerOrders = [
                     <?= $this->render('parts/favorite', ['model' => $model]) ?>
                 </div>
                 <div class="qa-view-body">
-                    <h1 class="qa-view-title"><?= $this->title ?></h1>
+                    <h1 class="qa-view-title"><?= Html::encode($this->title) ?></h1>
 
                     <div class="qa-view-text">
-                        <?= $model->content ?>
+                        <?= Html::encode($model->content) ?>
                     </div>
 
                     <div class="qa-view-meta">
@@ -65,7 +66,7 @@ $answerOrders = [
                         </div>
                         <div class="qa-view-body">
                             <div class="qa-view-text">
-                                <?= $row->content ?>
+                                <?= Html::encode($row->content) ?>
                             </div>
 
                             <div class="qa-view-meta">

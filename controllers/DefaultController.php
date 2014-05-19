@@ -185,27 +185,24 @@ class DefaultController extends Controller
 
         if ($model && $status = $model->toggleFavorite()) {
             $response['data']['status'] = $status;
+            $response['data']['html'] = $this->renderPartial('parts/favorite', compact('model'));
         }
 
         if (Yii::$app->request->isAjax) {
             return new Response($response);
         }
 
-        return $this->refresh();
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     public function actionQuestionVote($id, $vote)
     {
-        $model = $this->findQuestionModel($id);
-
-        return $this->entityVote($model, $vote);
+        return $this->entityVote($this->findModel(Question::className(), $id), $vote);
     }
 
     public function actionAnswerVote($id, $vote)
     {
-        $model = $this->findAnswerModel($id);
-
-        return $this->entityVote($model, $vote);
+        return $this->entityVote($this->findModel(Answer::className(), $id), $vote);
     }
 
     public function actionAnswer($id)
@@ -222,21 +219,19 @@ class DefaultController extends Controller
 
     /**
      * Increment or decrement votes of model by given type
-     * @param $model
-     * @param $type string can be 'up' or 'down'
+     * @param ActiveRecord $model
+     * @param string $type can be 'up' or 'down'
      * @param string $format
      * @return Response
      */
-    protected function entityVote(ActiveRecord $model, $type, $format = 'json')
+    protected function entityVote($model, $type, $format = 'json')
     {
         $data = ['status' => false];
 
-        if ($model && !Vote::isUserCan($model)) {
+        if ($model && Vote::isUserCan($model, Yii::$app->user->id)) {
             $data = [
                 'status' => true,
-                'data' => [
-                    'votes' => Vote::process($model, $type)
-                ]
+                'html' => $this->renderPartial('parts/vote', ['model' => Vote::process($model, $type)])
             ];
         }
 
@@ -247,33 +242,18 @@ class DefaultController extends Controller
             ]);
         }
 
-        return $this->refresh();
+        return $this->redirect(['view', 'id' => $model['id']]);
     }
 
     /**
+     * @param string $modelClass
      * @param null $id
-     * @return null|\yii\db\ActiveQuery|static
+     * @return null|\yii\db\ActiveRecord|static
      * @throws \yii\web\NotFoundHttpException
      */
-    protected function findAnswerModel($id = null)
+    protected function findModel($modelClass, $id = null)
     {
-        /** if $id is null, return ActiveQuery */
-        if (($model = Answer::find($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-
-    /**
-     * @param null $id
-     * @return \yii\db\ActiveQuery
-     * @throws \yii\web\NotFoundHttpException
-     */
-    protected function findQuestionModel($id = null)
-    {
-        /** if $id is null, return ActiveQuery */
-        if (($model = Question::find($id)) !== null) {
+        if (($model = $modelClass::find()->where(['id'=> $id])->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

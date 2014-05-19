@@ -87,18 +87,20 @@ class Vote extends ActiveRecord
 
     /**
      * Check if current user has access to vote
+     * @param ActiveRecord $model
+     * @param int $userId
+     * @return bool
      */
-    public static function isUserCan(ActiveRecord $model)
+    public static function isUserCan($model, $userId)
     {
-        $userId = Yii::$app->user->id;
-
-        if ($model->hasAttribute('user_id') && $model->user_id == $userId) {
+        //if he try vote on its own question
+        if (isset($model['user_id']) && $model['user_id'] == $userId) {
             return false;
         } else {
             return !self::find()->where([
                 'user_id' => $userId,
-                'entity' => self::getModelEntityType($model),
-                'entity_id' => $model->id
+                'entity' => self::modelEntityType($model),
+                'entity_id' => $model['id']
             ])->exists();
         }
     }
@@ -107,37 +109,28 @@ class Vote extends ActiveRecord
      * Increment votes for given model
      * @param ActiveRecord $model
      * @param string $type of vote, up or down
-     * @return int|mixed
+     * @return ActiveRecord
      */
     public static function process(ActiveRecord $model, $type)
     {
-        switch ($type) {
-            case self::TYPE_UP:
-                $value = 1;
-                break;
-            case self::TYPE_DOWN:
-                $value = -1;
-                break;
-            default:
-                $value = 0;
-        }
+        $value = self::value($type);
 
-        $votes = 0;
 
-        if ($model->hasAttribute('votes')) {
-            $votes = $model->votes + $value;
-            $model->votes = $votes;
+        if (isset($model['votes'])) {
+            $model['votes'] += $value;
 
-            $vote = new self(['entity_id' => $model->id, 'vote' => $value]);
-
-            $vote->entity = self::getModelEntityType($model);
+            $vote = new self([
+                'entity_id' => $model['id'],
+                'vote' => $value,
+                'entity' => self::modelEntityType($model)
+            ]);
 
             if ($vote->save() && $model->save()) {
-                return $model->votes;
+                return $model;
             }
         }
 
-        return $votes;
+        return false;
     }
 
     /**
@@ -146,7 +139,7 @@ class Vote extends ActiveRecord
      * @throws UnknownClassException
      * @return string
      */
-    protected static function getModelEntityType($model)
+    protected static function modelEntityType($model)
     {
         if ($model instanceof Question) {
             return self::ENTITY_QUESTION;
@@ -155,6 +148,25 @@ class Vote extends ActiveRecord
         } else {
             $className = get_class($model);
             throw new UnknownClassException("Model class '{$className}' not supported");
+        }
+    }
+
+    /**
+     * Get value to increment or decrement
+     * @param $type
+     * @return int
+     */
+    protected static function value($type)
+    {
+        switch ($type) {
+            case self::TYPE_UP:
+                return 1;
+                break;
+            case self::TYPE_DOWN:
+                return 1;
+                break;
+            default:
+                return 0;
         }
     }
 

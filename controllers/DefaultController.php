@@ -134,7 +134,7 @@ class DefaultController extends Controller
     public function actionEdit($id)
     {
         /** @var Question $model */
-        $model = $this->findQuestionModel($id);
+        $model = $this->findModel(Question::className(), $id);
 
         if ($model->isAuthor()) {
             if ($model->load($_POST) && $model->save()) {
@@ -151,7 +151,7 @@ class DefaultController extends Controller
     public function actionDelete($id)
     {
         /** @var Question $model */
-        $model = $this->findQuestionModel($id);
+        $model = $this->findModel(Question::className(), $id);
 
         if ($model->isAuthor()) {
             $model->delete();

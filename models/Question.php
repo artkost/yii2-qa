@@ -45,7 +45,7 @@ class Question extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'qa_question';
+        return '{{%qa_question}}';
     }
 
     /**
@@ -61,8 +61,8 @@ class Question extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => 'alias'
                 ],
                 'value' => function ($event) {
-                        return Inflector::slug($event->sender->title);
-                    }
+                    return Inflector::slug($event->sender->title);
+                }
             ],
             [
                 'class' => AttributeBehavior::className(),
@@ -70,8 +70,8 @@ class Question extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => 'status'
                 ],
                 'value' => function ($event) {
-                        return self::STATUS_PUBLISHED;
-                    }
+                    return self::STATUS_PUBLISHED;
+                }
             ],
             [
                 'class' => BlameableBehavior::className(),
@@ -120,9 +120,9 @@ class Question extends ActiveRecord
     /**
      * This is invoked after the record is saved.
      */
-    public function afterSave($insert)
+    public function afterSave($insert, $changedAttributes)
     {
-        parent::afterSave($insert);
+        parent::afterSave($insert, $changedAttributes);
         Tag::updateFrequency($this->_oldTags, $this->tags);
     }
 
@@ -197,7 +197,7 @@ class Question extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne($this->getModule()->userClass, ['id' => 'user_id']);
+        return $this->hasOne(Yii::$app->user->identityClass, ['id' => 'user_id']);
     }
 
     /**
@@ -224,6 +224,15 @@ class Question extends ActiveRecord
     public function normalizeTags($attribute, $params)
     {
         $this->tags = Tag::array2String(array_unique(Tag::string2Array($this->tags)));
+    }
+
+    /**
+     * Check if is given user unique
+     * @return bool
+     */
+    public function isUserUnique()
+    {
+        return $this->user_id !== Yii::$app->user->id;
     }
 
     public static function incrementAnswers($id)

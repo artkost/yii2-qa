@@ -149,9 +149,9 @@ class Answer extends ActiveRecord
     /**
      * This is invoked after the record is saved.
      */
-    public function afterSave($insert)
+    public function afterSave($insert, $changedAttribute)
     {
-        parent::afterSave($insert);
+        parent::afterSave($insert, $changedAttribute);
 
         if ($insert) {
             Question::incrementAnswers($this->question_id);

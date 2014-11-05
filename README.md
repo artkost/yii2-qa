@@ -42,7 +42,7 @@ return [
 
 Install Migrations
 
-```php yii migrate --migrationPath=@vendor/artkost/qa/migrations```
+```php yii migrate --migrationPath=@vendor/artkost/yii2-qa/migrations```
 
 You can then access QA through the following URL:
 

@@ -9,8 +9,19 @@ use yii\data\ActiveDataProvider;
  * Question Model Search
  * @package artkost\qa\models
  */
-class QuestionSearch extends Model
+class QuestionSearch extends Question
 {
+
+    /**
+     * @inheritdoc
+     */
+    public function scenarios()
+    {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
+    }
+
+
     /**
      * @param $params
      * @return ActiveDataProvider
@@ -23,12 +34,10 @@ class QuestionSearch extends Model
         ]);
 
         if (isset($params['tags']) && $params['tags']) {
-            $tags = Tag::string2Array($params['tags']);
-
-            $query->andWhere(['like', 'tags', $tags]);
+            $query->andWhere(['like', 'tags', $params['tags']]);
         }
 
-        if (!($this->load($params, '') && $this->validate())) {
+        if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
 

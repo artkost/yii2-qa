@@ -22,40 +22,7 @@ class Tag extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'qa_tag';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['name'], 'required'],
-            [['name'], 'string'],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => $this->t('ID'),
-            'name' => $this->t('Name'),
-            'frequency' => $this->t('Frequency'),
-        ];
-    }
-
-    /**
-     * Convert string of comma separated values to array
-     * @param $tags
-     * @return array
-     */
-    public static function string2Array($tags)
-    {
-        return preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY);
+        return '{{%qa_tag}}';
     }
 
     /**
@@ -79,6 +46,16 @@ class Tag extends ActiveRecord
         $newTags = self::string2Array($newTags);
         self::addTags(array_values(array_diff($newTags, $oldTags)));
         self::removeTags(array_values(array_diff($oldTags, $newTags)));
+    }
+
+    /**
+     * Convert string of comma separated values to array
+     * @param $tags
+     * @return array
+     */
+    public static function string2Array($tags)
+    {
+        return preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY);
     }
 
     /**
@@ -134,5 +111,28 @@ class Tag extends ActiveRecord
         }
 
         return $names;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['name'], 'required'],
+            [['name'], 'string'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => $this->t('ID'),
+            'name' => $this->t('Name'),
+            'frequency' => $this->t('Frequency'),
+        ];
     }
 }

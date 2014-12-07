@@ -1,9 +1,9 @@
 
-.qa-index .question-meta {
+.qa-list .question-meta {
     float: right;
 }
 
-.qa-index .qa-summary {
+.qa-list .qa-summary {
     margin-left: 208px;
 }
 

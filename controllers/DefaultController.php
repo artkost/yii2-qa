@@ -2,7 +2,6 @@
 
 namespace artkost\qa\controllers;
 
-use Yii;
 use artkost\qa\ActiveRecord;
 use artkost\qa\Asset;
 use artkost\qa\models\Answer;
@@ -10,14 +9,15 @@ use artkost\qa\models\Question;
 use artkost\qa\models\QuestionSearch;
 use artkost\qa\models\Tag;
 use artkost\qa\models\Vote;
-use artkost\qa\models\Favorite;
+use artkost\qa\Module;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yii\filters\VerbFilter;
 
 class DefaultController extends Controller
 {
@@ -46,12 +46,22 @@ class DefaultController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'view', 'tag-suggest'],
+                        'actions' => ['index', 'view', 'tags', 'tag-suggest'],
                         'roles' => ['?', '@']
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['ask', 'answer', 'edit', 'delete', 'my', 'favorite', 'question-favorite', 'question-vote', 'answer-vote'],
+                        'actions' => [
+                            'my',
+                            'ask',
+                            'edit',
+                            'answer',
+                            'delete',
+                            'favorite',
+                            'answer-vote',
+                            'question-vote',
+                            'question-favorite',
+                        ],
                         'roles' => ['@']
                     ],
                     [
@@ -62,37 +72,70 @@ class DefaultController extends Controller
         ];
     }
 
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
-        $searchModel = new  QuestionSearch();
+        $searchModel = new QuestionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
         $models = $dataProvider->getModels();
 
         return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
     }
 
+    /**
+     * @param $tags
+     * @return string
+     */
+    public function actionTags($tags)
+    {
+        $tags = Tag::string2Array($tags);
+        $searchModel = new QuestionSearch();
+        $dataProvider = $searchModel->search(['tags' => $tags]);
+        $models = $dataProvider->getModels();
+
+        return $this->render('tags', compact('searchModel', 'models', 'dataProvider', 'tags'));
+    }
+
+    /**
+     * @return string
+     */
     public function actionFavorite()
     {
-        $searchModel = new  QuestionSearch();
+        $searchModel = new QuestionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        $dataProvider->query->joinWith('favorites', true, 'RIGHT JOIN')->where([Question::tableName().'.user_id' => Yii::$app->user->id]);
+        $dataProvider->query
+            ->joinWith('favorites', true, 'RIGHT JOIN')
+            ->where([Question::tableName() . '.user_id' => Yii::$app->user->id]);
+
         $models = $dataProvider->getModels();
 
         return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
     }
 
+    /**
+     * @return string
+     */
     public function actionMy()
     {
         $searchModel = new  QuestionSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        $dataProvider->query->where(['user_id' => Yii::$app->user->id]);
+        $dataProvider->query
+            ->where(['user_id' => Yii::$app->user->id]);
+
         $models = $dataProvider->getModels();
+
         return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
     }
 
+    /**
+     * @return Response
+     */
     public function actionTagSuggest()
     {
         $tags = [];
+
         if (isset($_GET['q']) && ($keyword = trim($_GET['q'])) !== '') {
             $tags = Tag::suggest($keyword);
         }
@@ -102,13 +145,17 @@ class DefaultController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @throws NotFoundHttpException
+     */
     public function actionView($id)
     {
         /** @var Question $model */
         $model = Question::find()->with('user')->where(['id' => $id])->one();
 
         if ($model) {
-            if ($this->module->isUserUnique()) {
+            if ($model->isUserUnique()) {
                 $model->updateCounters(['views' => 1]);
             }
 
@@ -131,6 +178,11 @@ class DefaultController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     */
     public function actionEdit($id)
     {
         /** @var Question $model */
@@ -144,10 +196,16 @@ class DefaultController extends Controller
 
             return $this->render('edit', compact('model'));
         } else {
-            throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+            throw new ForbiddenHttpException(Module::t('You are not allowed to perform this action.'));
         }
     }
 
+    /**
+     * @param $id
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     */
     public function actionDelete($id)
     {
         /** @var Question $model */
@@ -157,10 +215,13 @@ class DefaultController extends Controller
             $model->delete();
             return $this->redirect(['index']);
         } else {
-            throw new ForbiddenHttpException(Yii::t('yii', 'You are not allowed to perform this action.'));
+            throw new ForbiddenHttpException(Module::t('You are not allowed to perform this action.'));
         }
     }
 
+    /**
+     * @return string|Response
+     */
     public function actionAsk()
     {
         $model = new Question();
@@ -173,6 +234,10 @@ class DefaultController extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return Response
+     */
     public function actionQuestionFavorite($id)
     {
         /** @var Question $model */
@@ -195,16 +260,32 @@ class DefaultController extends Controller
         return $this->redirect(['view', 'id' => $id]);
     }
 
+    /**
+     * @param $id
+     * @param $vote
+     * @return Response
+     * @throws NotFoundHttpException
+     */
     public function actionQuestionVote($id, $vote)
     {
         return $this->entityVote($this->findModel(Question::className(), $id), $vote);
     }
 
+    /**
+     * @param $id
+     * @param $vote
+     * @return Response
+     * @throws NotFoundHttpException
+     */
     public function actionAnswerVote($id, $vote)
     {
         return $this->entityVote($this->findModel(Answer::className(), $id), $vote);
     }
 
+    /**
+     * @param $id
+     * @return string|Response
+     */
     public function actionAnswer($id)
     {
         $model = new Answer(['question_id' => $id]);
@@ -248,12 +329,12 @@ class DefaultController extends Controller
     /**
      * @param string $modelClass
      * @param null $id
-     * @return null|\yii\db\ActiveRecord|static
+     * @return ActiveRecord
      * @throws \yii\web\NotFoundHttpException
      */
     protected function findModel($modelClass, $id = null)
     {
-        if (($model = $modelClass::find()->where(['id'=> $id])->one()) !== null) {
+        if (($model = $modelClass::find()->where(['id' => $id])->one()) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

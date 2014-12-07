@@ -2,9 +2,12 @@
 
 namespace artkost\qa;
 
+use artkost\qa\models\Question;
+use Yii;
+use yii\base\BootstrapInterface;
 use yii\base\InvalidCallException;
 use yii\helpers\Url;
-use Yii;
+use yii\web\GroupUrlRule;
 
 /**
  * This is the main module class for the QA module.
@@ -42,7 +45,7 @@ use Yii;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Module extends \yii\base\Module
+class Module extends \yii\base\Module implements BootstrapInterface
 {
     /**
      * @inheritdoc
@@ -50,10 +53,10 @@ class Module extends \yii\base\Module
     public $controllerNamespace = '\artkost\qa\controllers';
 
     /**
-     * User model class
-     * @var string
+     * Allow users to add tags
+     * @var bool
      */
-    public $userClass = '\app\models\User';
+    public $allowUserGeneratedTags = false;
 
     /**
      * Formatter function name in user model, or callable
@@ -61,19 +64,49 @@ class Module extends \yii\base\Module
      */
     public $userNameFormatter = 'getId';
 
-    public function init()
+    /**
+     * @var string The prefix for user module URL.
+     * @See [[GroupUrlRule::prefix]]
+     */
+    public $urlPrefix = 'qa';
+
+    /**
+     * @var array The rules to be used in URL management.
+     */
+    public $urlRules = [
+        'ask' => 'default/ask',
+        'my' => 'default/my',
+        'favorite' => 'default/favorite',
+        '' => 'default/index',
+        'tag/<tags>' => 'default/tags',
+        'tags/suggest' => 'default/tag-suggest',
+        '<alias>-<id>' => 'default/view'
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    public function bootstrap($app)
     {
-        parent::init();
-
-        $i18n = Yii::$app->i18n;
-
-        if (!isset($i18n->translations['artkost\qa'])) {
-            $i18n->translations['artkost\qa'] = [
-                'class' => 'yii\i18n\PhpMessageSource',
-                'sourceLanguage' => 'en',
-                'basePath' => '@artkost/qa/messages',
+        if ($app instanceof \yii\console\Application) {
+            $this->controllerNamespace = '\artkost\qa\commands';
+        } else if ($app instanceof \yii\web\Application) {
+            $configUrlRule = [
+                'routePrefix' => $this->id,
+                'prefix' => $this->urlPrefix,
+                'rules' => $this->urlRules
             ];
+
+            $app->get('urlManager')->rules[] = new GroupUrlRule($configUrlRule);
         }
+
+        $app->get('i18n')->translations['artkost\qa'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'basePath' => __DIR__ . '/messages',
+            'fileMap' => [
+                'artkost\qa' => 'qa.php'
+            ]
+        ];
     }
 
     /**
@@ -106,17 +139,11 @@ class Module extends \yii\base\Module
      */
     public function getUserName($model)
     {
-        //if (method_exists($model, $this->userNameFormatter)) {
+        if (is_callable($this->userNameFormatter)) {
+            return call_user_func($this->userNameFormatter, $model);
+        } else if (method_exists($model, $this->userNameFormatter)) {
             return call_user_func([$model, $this->userNameFormatter]);
-        //} else throw new InvalidCallException('Invalid userNameFormatter function');
-    }
-
-    /**
-     * Check if is given user unique
-     */
-    public function isUserUnique()
-    {
-        return !Yii::$app->user->isGuest;
+        } else throw new InvalidCallException('Invalid userNameFormatter function');
     }
 
 }

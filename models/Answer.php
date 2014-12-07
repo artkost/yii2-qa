@@ -2,11 +2,11 @@
 
 namespace artkost\qa\models;
 
+use artkost\qa\ActiveRecord;
+use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use artkost\qa\ActiveRecord;
 use yii\db\ActiveQuery;
-use Yii;
 
 /**
  * Answer Model
@@ -34,7 +34,47 @@ class Answer extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'qa_answer';
+        return '{{%qa_answer}}';
+    }
+
+    /**
+     * @param int $question_id
+     * @return int
+     */
+    public static function removeRelation($question_id)
+    {
+        return self::deleteAll(
+            'question_id=:question_id',
+            [
+                ':question_id' => $question_id,
+            ]
+        );
+    }
+
+    /**
+     * Apply possible answers order to query
+     * @param ActiveQuery $query
+     * @param $order
+     * @return ActiveQuery
+     */
+    public static function applyOrder(ActiveQuery $query, $order)
+    {
+        switch ($order) {
+            case 'oldest':
+                $query->orderBy('created_at DESC');
+                break;
+
+            case 'active':
+                $query->orderBy('created_at ASC');
+                break;
+
+            case 'votes':
+            default:
+                $query->orderBy('votes DESC');
+                break;
+        }
+
+        return $query;
     }
 
     /**
@@ -121,32 +161,6 @@ class Answer extends ActiveRecord
     }
 
     /**
-     * Apply possible answers order to query
-     * @param ActiveQuery $query
-     * @param $order
-     * @return ActiveQuery
-     */
-    public static function applyOrder(ActiveQuery $query, $order)
-    {
-        switch ($order) {
-            case 'oldest':
-                $query->orderBy('created_at DESC');
-                break;
-
-            case 'active':
-                $query->orderBy('created_at ASC');
-                break;
-
-            case 'votes':
-            default:
-                $query->orderBy('votes DESC');
-                break;
-        }
-
-        return $query;
-    }
-
-    /**
      * This is invoked after the record is saved.
      */
     public function afterSave($insert)
@@ -165,5 +179,6 @@ class Answer extends ActiveRecord
     {
         parent::afterDelete();
         Question::decrementAnswers($this->question_id);
+        Vote::removeRelation($this);
     }
 }

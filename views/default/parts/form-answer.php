@@ -15,7 +15,7 @@ $form = ActiveForm::begin(['id' => 'answer-form', 'action' => $action]);
 <?= $form->field($model, 'content')->textarea(['rows' => 6])->label(''); ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Module::t($model->isNewRecord ? 'Create' : 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton(Module::t($model->isNewRecord ? 'Answer' : 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
 <?php ActiveForm::end() ?>

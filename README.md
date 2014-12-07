@@ -30,11 +30,10 @@ Once the extension is installed, simply modify your application configuration as
 
 ```php
 return [
-	'modules' => [
-		'qa' => 'artkost\qa\Module',
+	'qa' => [
+		'class' => 'artkost\qa\Module',
 		'userClass' => 'app\models\User',
 		'userNameFormatter' => 'getUserName'
-		...
 	],
 	...
 ];

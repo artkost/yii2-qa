@@ -16,9 +16,18 @@
     ],
     "require": {
         "yiisoft/yii2": "*",
-        "yiisoft/yii2-bootstrap": "*"
+        "yiisoft/yii2-bootstrap": "*",
+        "bower-asset/typeahead.js": "0.10.*"
+    },
+    "require-dev": {
+        "yiisoft/yii2-codeception": "*",
+        "codeception/specify": "*",
+        "codeception/verify": "*"
     },
     "autoload": {
         "psr-4": { "artkost\\qa\\": "" }
+    },
+    "extra": {
+        "bootstrap": "artkost\\qa\\Module"
     }
 }

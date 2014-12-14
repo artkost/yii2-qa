@@ -3,6 +3,7 @@
 namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -36,6 +37,7 @@ class Favorite extends ActiveRecord
     {
         $favorite = new self();
         $favorite->attributes = ['question_id' => $id];
+
         if ($favorite->save()) {
             return true;
         }
@@ -116,20 +118,20 @@ class Favorite extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'question_id' => 'Question ID',
-            'created_at' => 'Created At',
-            'created_ip' => 'Created Ip',
+            'id' => Module::t('model', 'ID'),
+            'user_id' => Module::t('model', 'User ID'),
+            'question_id' => Module::t('model', 'Question ID'),
+            'created_at' => Module::t('model', 'Created At'),
+            'created_ip' => Module::t('model', 'Created Ip'),
         ];
     }
 
     /**
-     * Questions Relation
+     * Question Relation
      * @return \yii\db\ActiveQueryInterface
      */
-    public function getQuestions()
+    public function getQuestion()
     {
-        return $this->hasMany(Question::className(), ['id' => 'question_id']);
+        return $this->hasOne(Question::className(), ['id' => 'question_id']);
     }
 }

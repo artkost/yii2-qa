@@ -12,11 +12,11 @@ $userId = Yii::$app->user->id;
     <?php if (Vote::isUserCan($model, $userId)): ?>
         <a class="btn btn-default qa-vote-up"
            href="<?= Module::url([$route, 'id' => $model->id, 'vote' => 'up']) ?>"
-           title="<?= Module::t('Vote up') ?>">
+           title="<?= Module::t('main', 'Vote up') ?>">
             <span class="glyphicon glyphicon-chevron-up"></span>
         </a>
     <?php else: ?>
-        <span class="btn btn-default disabled qa-vote-up" title="<?= Module::t('Vote up') ?>">
+        <span class="btn btn-default disabled qa-vote-up" title="<?= Module::t('main', 'Vote up') ?>">
             <span class="glyphicon glyphicon-chevron-up"></span>
         </span>
     <?php endif; ?>
@@ -24,12 +24,12 @@ $userId = Yii::$app->user->id;
     <?php if (Vote::isUserCan($model, $userId)): ?>
         <a class="btn btn-default qa-vote-down"
            href="<?= Module::url([$route, 'id' => $model->id, 'vote' => 'down']) ?>"
-           title="<?= Module::t('Vote down') ?>">
+           title="<?= Module::t('main', 'Vote down') ?>">
             <span class="glyphicon glyphicon-chevron-down"></span>
         </a>
     <?php else: ?>
         <span class="btn btn-default disabled qa-vote-down"
-              title="<?= Module::t('Vote down') ?>">
+              title="<?= Module::t('main', 'Vote down') ?>">
             <span class="glyphicon glyphicon-chevron-down"></span>
         </span>
     <?php endif; ?>

@@ -12,16 +12,20 @@ use yii\base\Widget;
 class Popular extends Widget
 {
     public $limit = 10;
+    public $views = 10;
 
     /**
      * @inheritdoc
      */
     public function run()
     {
-        $models  = [];
+        $models = Question::find()
+            ->where('views > :views', [':views' => $this->views])
+            ->limit($this->limit)
+            ->all();
 
         return $this->render('popular', [
-            'models'  => $models,
+            'models' => $models,
         ]);
     }
 }

@@ -38,6 +38,7 @@ class DefaultController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
+                    'get' => ['tag-suggest'],
                     'delete' => ['post'],
                 ],
             ],
@@ -134,15 +135,16 @@ class DefaultController extends Controller
      */
     public function actionTagSuggest()
     {
-        $tags = [];
+        $response = [
+            'data' => ['status' => false],
+            'format' => 'json'
+        ];
 
         if (isset($_GET['q']) && ($keyword = trim($_GET['q'])) !== '') {
-            $tags = Tag::suggest($keyword);
+            $response['data']['items'] = Tag::suggest($keyword);
         }
 
-        return new Response([
-            'data' => $tags,
-        ]);
+        return new Response($response);
     }
 
     /**
@@ -174,7 +176,7 @@ class DefaultController extends Controller
 
             return $this->render('view', compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException(Module::t('main', 'The requested page does not exist.'));
         }
     }
 
@@ -196,7 +198,7 @@ class DefaultController extends Controller
 
             return $this->render('edit', compact('model'));
         } else {
-            throw new ForbiddenHttpException(Module::t('You are not allowed to perform this action.'));
+            throw new ForbiddenHttpException(Module::t('main', 'You are not allowed to perform this action.'));
         }
     }
 
@@ -215,7 +217,7 @@ class DefaultController extends Controller
             $model->delete();
             return $this->redirect(['index']);
         } else {
-            throw new ForbiddenHttpException(Module::t('You are not allowed to perform this action.'));
+            throw new ForbiddenHttpException(Module::t('main','You are not allowed to perform this action.'));
         }
     }
 

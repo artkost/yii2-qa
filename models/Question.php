@@ -3,6 +3,7 @@
 namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -99,12 +100,12 @@ class Question extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => $this->t('ID'),
-            'title' => $this->t('Title'),
-            'alias' => $this->t('Alias'),
-            'content' => $this->t('Content'),
-            'tags' => $this->t('Tags'),
-            'status' => $this->t('Status'),
+            'id' => Module::t('model', 'ID'),
+            'title' => Module::t('model', 'Title'),
+            'alias' => Module::t('model', 'Alias'),
+            'content' => Module::t('model', 'Content'),
+            'tags' => Module::t('model', 'Tags'),
+            'status' => Module::t('model', 'Status'),
         ];
     }
 
@@ -167,7 +168,7 @@ class Question extends ActiveRecord
      */
     public function getUserName()
     {
-        return $this->user ? $this->getModule()->getUserName($this->user) : $this->user_id;
+        return $this->user ? Module::getInstance()->getUserName($this->user) : $this->user_id;
     }
 
     /**

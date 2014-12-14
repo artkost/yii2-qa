@@ -6,7 +6,7 @@
 
 use artkost\qa\Module;
 
-$this->title = Module::t('Questions');
+$this->title = Module::t('main', 'Questions');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="qa-index">

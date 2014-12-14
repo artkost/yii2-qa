@@ -8,7 +8,7 @@
 use artkost\qa\Module;
 use yii\helpers\Html;
 
-$this->title = Module::t('Questions by tags');
+$this->title = Module::t('main', 'Questions by tags');
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = Html::encode(implode(', ', $tags));
 ?>

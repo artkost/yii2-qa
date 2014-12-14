@@ -12,15 +12,15 @@ use yii\helpers\Html;
             <div class="qa-panels">
                 <div class="qa-panel votes">
                     <div class="qa-panel-count"><?= $model->votes ?></div>
-                    <div><?= Module::t('votes')?></div>
+                    <div><?= Module::t('main', 'votes')?></div>
                 </div>
                 <div class="qa-panel status-unanswered">
                     <div class="qa-panel-count"><?= $model->answers ?></div>
-                    <div><?= Module::t('answers')?></div>
+                    <div><?= Module::t('main', 'answers')?></div>
                 </div>
                 <div class="qa-panel views">
                     <div class="qa-panel-count"><?= $model->views ?></div>
-                    <div><?= Module::t('views') ?></div>
+                    <div><?= Module::t('main', 'views') ?></div>
                 </div>
             </div>
             <div class="qa-summary">
@@ -39,7 +39,7 @@ use yii\helpers\Html;
         </div>
     <?php endforeach; else: ?>
         <div class="list-group-item qa-item-not-found">
-            <h4 class="list-group-item-heading question-heading"><?= Module::t('No questions yet') ?></h4>
+            <h4 class="list-group-item-heading question-heading"><?= Module::t('main', 'No questions yet') ?></h4>
         </div>
     <?php endif; ?>
 </div>

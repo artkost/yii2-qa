@@ -3,6 +3,7 @@
 namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -110,9 +111,9 @@ class Answer extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => $this->t('ID'),
-            'content' => $this->t('Content'),
-            'status' => $this->t('Status'),
+            'id' => Module::t('model', 'ID'),
+            'content' => Module::t('model', 'Content'),
+            'status' => Module::t('model', 'Status'),
         ];
     }
 
@@ -122,7 +123,7 @@ class Answer extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne($this->getModule()->userClass, ['id' => 'user_id']);
+        return $this->hasOne(Module::getInstance()->userClass, ['id' => 'user_id']);
     }
 
     /**
@@ -163,9 +164,9 @@ class Answer extends ActiveRecord
     /**
      * This is invoked after the record is saved.
      */
-    public function afterSave($insert)
+    public function afterSave($insert, $changedAttributes)
     {
-        parent::afterSave($insert);
+        parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
             Question::incrementAnswers($this->question_id);

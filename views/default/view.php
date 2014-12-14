@@ -11,7 +11,7 @@ use artkost\qa\Module;
 use yii\helpers\Html;
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Module::t('Questions'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Questions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $answerOrders = [
@@ -34,7 +34,6 @@ $answerOrders = [
                 <div class="panel panel-default">
                     <div class="panel-body qa-view-text">
                         <?= Html::encode($model->content) ?>
-
                     </div>
                 </div>
 
@@ -47,13 +46,15 @@ $answerOrders = [
         </div>
 
         <div class="qa-view-answers-heading clearfix">
-            <h3 class="qa-view-title"><?= Module::t('{n, plural, =0{No answers yet} =1{One answer} other{# answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
+            <h3 class="qa-view-title"><?= Module::t('main', '{n, plural, =0{No answers yet} =1{One answer} other{# answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
 
             <?php if ($answerDataProvider->totalCount): ?>
                 <ul class="qa-view-tabs nav nav-tabs">
                     <?php foreach ($answerOrders as $aId => $aOrder): ?>
                         <li <?= ($aOrder == $answerOrder) ? 'class="active"' : '' ?> >
-                            <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>"><?= Module::t($aId) ?></a>
+                            <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>">
+                                <?= Module::t('main', $aId) ?>
+                            </a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -78,7 +79,6 @@ $answerOrders = [
                     </div>
                 </div>
             <?php endforeach; ?>
-
         </div>
 
         <div class="qa-view-pager">

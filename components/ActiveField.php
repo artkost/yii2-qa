@@ -27,7 +27,7 @@ class ActiveField extends \yii\widgets\ActiveField
 
         $this->inputOptions['class'] .= ' typeahead typeahead-' . (++$counter);
 
-        $data['remote'] = Url::toRoute($route);
+        $data['remote'] = Url::toRoute($route) . '?q=%QUERY';
 
         $this->form->getView()->registerJs("yii.qa.fieldAutocomplete($counter, " . Json::encode($data) . ");");
 

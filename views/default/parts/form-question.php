@@ -1,8 +1,6 @@
 <?php
 use artkost\qa\components\ActiveField;
 use artkost\qa\Module;
-use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /** @var ActiveForm $form */
@@ -16,18 +14,26 @@ $form = ActiveForm::begin([
 
 <?= $form->field($model, 'title')
     ->textInput()
-    ->hint(Module::t('')); ?>
+    ->hint(Module::t('main', "What's your question? Be specific.")); ?>
+
 <?= $form->field($model, 'content')
     ->textarea()
-    ->hint(Module::t('Markdown powered content')); ?>
+    ->hint(Module::t('main', 'HTML filtered content')); ?>
 
 <?= $form->field($model, 'tags')
-    ->autoComplete(Url::toRoute('tag-suggest'))
+    ->autoComplete(['/qa/default/tag-suggest'])
     ->textInput()
-    ->hint(Module::t('Comma separated list of tags')) ?>
+    ->hint(Module::t('main', 'Comma separated list of tags')) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Module::t($model->isNewRecord ? 'Ask' : 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <div class="btn-group btn-group-lg">
+            <button type="button" class="btn"><?= Module::t('main', 'Draft') ?></button>
+            <?php if ($model->isNewRecord): ?>
+                <button type="submit" class="btn btn-primary"><?= Module::t('main', 'Publish') ?></button>
+            <?php else: ?>
+                <button type="submit" class="btn btn-success"><?= Module::t('main', 'Update') ?></button>
+            <?php endif; ?>
+        </div>
     </div>
 
 <? ActiveForm::end(); ?>

@@ -1,7 +1,7 @@
 @import "qa.index.css";
 @import "qa.view.css";
 @import "qa.edit.css";
-
+@import "qa.typeahead.css";
 
 .qa-list {
     margin-top: 10px;

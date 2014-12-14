@@ -3,6 +3,9 @@
 
     var Questions = {
 
+        voteSelector: 'a.qa-vote-up, a.qa-vote-down',
+        favoriteSelector: 'a.qa-favorite-link',
+
         /**
          *
          * @param e
@@ -28,7 +31,12 @@
                         return Bloodhound.tokenizers.whitespace(d.word);
                     },
                     queryTokenizer: Bloodhound.tokenizers.whitespace,
-                    remote: data.remote
+                    remote: {
+                        url: data.remote,
+                        filter: function(response) {
+                            return response.items;
+                        }
+                    }
                 });
 
             datum.initialize();
@@ -38,8 +46,8 @@
     };
 
     $(function() {
-        $('div.qa-vote').on('click', 'a.qa-vote-up, a.qa-vote-down', Questions.handleResponse);
-        $('div.qa-favorite').on('click', 'a.qa-favorite-link', Questions.handleResponse);
+        $('div.qa-vote').on('click', Questions.voteSelector, Questions.handleResponse);
+        $('div.qa-favorite').on('click', Questions.favoriteSelector, Questions.handleResponse);
     });
 
     window.yii.qa = Questions;

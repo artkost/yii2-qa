@@ -2,7 +2,7 @@
 
 namespace artkost\qa\widgets;
 
-use artkost\qa\models\Question;
+use artkost\qa\models\Favorite as FavoriteModel;
 use yii\base\Widget;
 
 /**
@@ -12,14 +12,18 @@ use yii\base\Widget;
 class Favorite extends Widget
 {
     public $limit = 10;
-    public $user = 0;
+    public $userID = 0;
 
     /**
      * @inheritdoc
      */
     public function run()
     {
-        $models  = [];
+        $models = FavoriteModel::find()
+            ->limit($this->limit)
+            ->where(['user_id' => $this->userID])
+            ->with('question')
+            ->all();
 
         return $this->render('favorite', [
             'models'  => $models,

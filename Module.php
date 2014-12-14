@@ -47,6 +47,8 @@ use yii\web\GroupUrlRule;
  */
 class Module extends \yii\base\Module implements BootstrapInterface
 {
+    protected $_mail;
+
     /**
      * @inheritdoc
      */
@@ -79,7 +81,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
         'favorite' => 'default/favorite',
         '' => 'default/index',
         'tag/<tags>' => 'default/tags',
-        'tags/suggest' => 'default/tag-suggest',
+        'tag-suggest' => 'default/tag-suggest',
         '<alias>-<id>' => 'default/view'
     ];
 
@@ -100,25 +102,29 @@ class Module extends \yii\base\Module implements BootstrapInterface
             $app->get('urlManager')->rules[] = new GroupUrlRule($configUrlRule);
         }
 
-        $app->get('i18n')->translations['artkost\qa'] = [
+        $app->get('i18n')->translations['artkost/qa/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
             'basePath' => __DIR__ . '/messages',
             'fileMap' => [
-                'artkost\qa' => 'qa.php'
+                'qa/main' => 'main.php',
+                'qa/model' => 'main.php'
             ]
         ];
     }
 
+
+
     /**
      * Alias function for [[Yii::t()]]
+     * @param $category
      * @param $message
      * @param array $params
      * @param null $language
      * @return string
      */
-    public static function t($message, $params = [], $language = null)
+    public static function t($category, $message, $params = [], $language = null)
     {
-        return Yii::t('artkost\qa', $message, $params, $language);
+        return Yii::t('artkost/qa/' . $category, $message, $params, $language);
     }
 
     /**
@@ -130,6 +136,24 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public static function url($route, $scheme = false)
     {
         return Url::toRoute($route, $scheme);
+    }
+
+    /**
+     * @return \yii\swiftmailer\Mailer Mailer instance with predefined templates.
+     */
+    public function getMail()
+    {
+        if ($this->_mail === null) {
+            $this->_mail = Yii::$app->getMailer();
+            $this->_mail->htmlLayout = Yii::getAlias($this->id . '/mails/layouts/html');
+            $this->_mail->textLayout = Yii::getAlias($this->id . '/mails/layouts/text');
+            $this->_mail->viewPath = Yii::getAlias($this->id . '/mails/views');
+
+            if (isset(Yii::$app->params['robotEmail']) && Yii::$app->params['robotEmail'] !== null) {
+                $this->_mail->messageConfig['from'] = !isset(Yii::$app->params['robotName']) ? Yii::$app->params['robotEmail'] : [Yii::$app->params['robotEmail'] => Yii::$app->params['robotName']];
+            }
+        }
+        return $this->_mail;
     }
 
     /**

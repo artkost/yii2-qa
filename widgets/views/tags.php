@@ -7,7 +7,7 @@ use artkost\qa\Module;
 ?>
 
 <div class="panel panel-default">
-    <div class="panel-heading"><?= Module::t('Popular tags') ?></div>
+    <div class="panel-heading"><?= Module::t('main', 'Popular tags') ?></div>
     <div class="panel-body">
         <span class="qa-tags">
             <?php foreach ($models as $tag): ?>

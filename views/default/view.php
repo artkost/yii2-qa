@@ -29,19 +29,29 @@ $answerOrders = [
                 <?= $this->render('parts/favorite', ['model' => $model]) ?>
             </div>
             <div class="qa-view-body">
-                <h1 class="qa-view-title"><?= Html::encode($this->title) ?></h1>
+                <div class="page-header">
+                    <h1 class="qa-view-title">
+                        <?= Html::encode($this->title) ?>
+                        <?php if ($model->isDraft()): ?>
+                            <small><span class="label label-default"><?= Module::t('main', 'Draft') ?></span></small>
+                        <?php endif; ?>
+                    </h1>
+                </div>
 
                 <div class="panel panel-default">
                     <div class="panel-body qa-view-text">
                         <?= Html::encode($model->content) ?>
                     </div>
+                    <div class="panel-footer">
+                        <div class="qa-view-meta">
+                            <?= $this->render('parts/tags-list', ['model' => $model]) ?>
+                            <?= $this->render('parts/edit-links', ['model' => $model]) ?>
+                            <?= $this->render('parts/created', ['model' => $model]) ?>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="qa-view-meta">
-                    <?= $this->render('parts/tags-list', ['model' => $model]) ?>
-                    <?= $this->render('parts/edit-links', ['model' => $model]) ?>
-                    <?= $this->render('parts/created', ['model' => $model]) ?>
-                </div>
+
             </div>
         </div>
 
@@ -63,18 +73,19 @@ $answerOrders = [
 
         <div class="qa-view-answers">
             <?php foreach ($answerDataProvider->models as $row): ?>
-                <div class="qa-view-answer">
-                    <div class="qa-view-actions">
-                        <?= $this->render('parts/vote', ['model' => $row, 'route' => 'answer-vote']) ?>
-                    </div>
-                    <div class="qa-view-body">
+                <div class="qa-view-answer panel panel-default">
+                    <div class="panel-body">
                         <div class="qa-view-text">
                             <?= Html::encode($row->content) ?>
                         </div>
-
+                    </div>
+                    <div class="panel-footer">
                         <div class="qa-view-meta">
                             <?= $this->render('parts/edit-links', ['model' => $row]) ?>
                             <?= $this->render('parts/created', ['model' => $row]) ?>
+                        </div>
+                        <div class="qa-answer-like">
+                            <?= $this->render('parts/like', ['model' => $row, 'route' => 'answer-vote']) ?>
                         </div>
                     </div>
                 </div>

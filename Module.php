@@ -8,6 +8,7 @@ use yii\base\BootstrapInterface;
 use yii\base\InvalidCallException;
 use yii\helpers\Url;
 use yii\web\GroupUrlRule;
+use yii\web\IdentityInterface;
 
 /**
  * This is the main module class for the QA module.

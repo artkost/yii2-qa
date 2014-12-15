@@ -56,7 +56,7 @@ class Answer extends ActiveRecord
      * Apply possible answers order to query
      * @param ActiveQuery $query
      * @param $order
-     * @return ActiveQuery
+     * @return string
      */
     public static function applyOrder(ActiveQuery $query, $order)
     {
@@ -75,7 +75,7 @@ class Answer extends ActiveRecord
                 break;
         }
 
-        return $query;
+        return $order;
     }
 
     /**
@@ -123,7 +123,7 @@ class Answer extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Module::getInstance()->userClass, ['id' => 'user_id']);
+        return $this->hasOne(Yii::$app->user->identityClass, ['id' => 'user_id']);
     }
 
     /**
@@ -150,7 +150,15 @@ class Answer extends ActiveRecord
      */
     public function getUserName()
     {
-        return $this->user ? $this->getModule()->getUserName($this->user) : $this->user_id;
+        return $this->getUser() ? Module::getInstance()->getUserName($this->user) : $this->user_id;
+    }
+
+    /**
+     * @return Question
+     */
+    public function getQuestion()
+    {
+        return $this->hasOne(Question::className(), ['id' => 'question_id']);
     }
 
     /**

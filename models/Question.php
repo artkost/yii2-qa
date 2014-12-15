@@ -192,6 +192,23 @@ class Question extends ActiveRecord
     }
 
     /**
+     * @param $data
+     * @return bool
+     */
+    public function haveDraft($data)
+    {
+        return isset($data['draft']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDraft()
+    {
+        return $this->status == self::STATUS_DRAFT;
+    }
+
+    /**
      * @return bool
      */
     public function toggleFavorite()

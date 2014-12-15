@@ -26,8 +26,10 @@
 .qa-view-answer {
     min-height: 100px;
     margin-top: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+}
+
+.qa-view-answer .qa-view-meta {
+    float: right;
 }
 
 .qa-view-heading {

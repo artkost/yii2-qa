@@ -17,7 +17,9 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\db\Exception as DbException;
 use yii\web\Response;
+
 
 class DefaultController extends Controller
 {
@@ -183,6 +185,7 @@ class DefaultController extends Controller
     /**
      * @param $id
      * @throws ForbiddenHttpException
+     * @throws DbException
      * @throws NotFoundHttpException
      */
     public function actionEdit($id)
@@ -191,7 +194,16 @@ class DefaultController extends Controller
         $model = $this->findModel(Question::className(), $id);
 
         if ($model->isAuthor()) {
-            if ($model->load($_POST) && $model->save()) {
+            if ($model->load($_POST)) {
+
+                if ($model->haveDraft($_POST)) {
+                    $model->status = Question::STATUS_DRAFT;
+                }
+
+                if (!$model->save()) {
+                    throw new DbException(Module::t('main', 'Error save question'));
+                }
+
                 Yii::$app->session->setFlash('questionFormSubmitted');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -217,7 +229,7 @@ class DefaultController extends Controller
             $model->delete();
             return $this->redirect(['index']);
         } else {
-            throw new ForbiddenHttpException(Module::t('main','You are not allowed to perform this action.'));
+            throw new ForbiddenHttpException(Module::t('main', 'You are not allowed to perform this action.'));
         }
     }
 
@@ -281,7 +293,7 @@ class DefaultController extends Controller
      */
     public function actionAnswerVote($id, $vote)
     {
-        return $this->entityVote($this->findModel(Answer::className(), $id), $vote);
+        return $this->entityVote($this->findModel(Answer::className(), $id), $vote, 'parts/like');
     }
 
     /**
@@ -294,7 +306,11 @@ class DefaultController extends Controller
 
         if ($model->load($_POST) && $model->save()) {
             Yii::$app->session->setFlash('answerFormSubmitted');
-            return $this->redirect(['view', 'id' => $id]);
+
+            /** @var Question $question */
+            $question = $model->question;
+
+            return $this->redirect(['view', 'id' => $question->id, 'alias' => $question->alias]);
         } else {
             return $this->render('answer', compact('model'));
         }
@@ -304,17 +320,18 @@ class DefaultController extends Controller
      * Increment or decrement votes of model by given type
      * @param ActiveRecord $model
      * @param string $type can be 'up' or 'down'
+     * @param string $partial template name
      * @param string $format
      * @return Response
      */
-    protected function entityVote($model, $type, $format = 'json')
+    protected function entityVote($model, $type, $partial = 'parts/vote', $format = 'json')
     {
         $data = ['status' => false];
 
         if ($model && Vote::isUserCan($model, Yii::$app->user->id)) {
             $data = [
                 'status' => true,
-                'html' => $this->renderPartial('parts/vote', ['model' => Vote::process($model, $type)])
+                'html' => $this->renderPartial($partial, ['model' => Vote::process($model, $type)])
             ];
         }
 

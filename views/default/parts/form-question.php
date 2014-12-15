@@ -27,11 +27,11 @@ $form = ActiveForm::begin([
 
     <div class="form-group">
         <div class="btn-group btn-group-lg">
-            <button type="button" class="btn"><?= Module::t('main', 'Draft') ?></button>
+            <button type="submit" name="draft" class="btn"><?= Module::t('main', 'Draft') ?></button>
             <?php if ($model->isNewRecord): ?>
-                <button type="submit" class="btn btn-primary"><?= Module::t('main', 'Publish') ?></button>
+                <button type="submit" name="submit" class="btn btn-primary"><?= Module::t('main', 'Publish') ?></button>
             <?php else: ?>
-                <button type="submit" class="btn btn-success"><?= Module::t('main', 'Update') ?></button>
+                <button type="submit" name="update" class="btn btn-success"><?= Module::t('main', 'Update') ?></button>
             <?php endif; ?>
         </div>
     </div>

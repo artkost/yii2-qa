@@ -3,8 +3,8 @@
 
     var Questions = {
 
-        voteSelector: 'a.qa-vote-up, a.qa-vote-down',
-        favoriteSelector: 'a.qa-favorite-link',
+        voteSelector: 'a.js-vote-up, a.js-vote-down',
+        favoriteSelector: 'a.js-favorite',
 
         /**
          *
@@ -46,8 +46,8 @@
     };
 
     $(function() {
-        $('div.qa-vote').on('click', Questions.voteSelector, Questions.handleResponse);
-        $('div.qa-favorite').on('click', Questions.favoriteSelector, Questions.handleResponse);
+        $('.js-vote').on('click', Questions.voteSelector, Questions.handleResponse);
+        $('.js-favorite').on('click', Questions.favoriteSelector, Questions.handleResponse);
     });
 
     window.yii.qa = Questions;

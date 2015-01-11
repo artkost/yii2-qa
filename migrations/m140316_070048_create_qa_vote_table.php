@@ -9,12 +9,12 @@ class m140316_070048_create_qa_vote_table extends \yii\db\Migration
     {
         $this->createTable(Vote::tableName(), [
             'id' => Schema::TYPE_PK,
-            'user_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
-            'entity_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
-            'entity' => "ENUM('question', 'answer') NOT NULL",
-            'vote' => 'TINYINT NOT NULL',
-            'created_at' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
-            'created_ip' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+            'user_id' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'entity_id' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'entity' => Schema::TYPE_SMALLINT . " NOT NULL",
+            'vote' => Schema::TYPE_SMALLINT . ' NOT NULL',
+            'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'created_ip' => Schema::TYPE_INTEGER . ' NOT NULL',
         ]);
     }
 

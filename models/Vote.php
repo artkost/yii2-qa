@@ -29,8 +29,8 @@ class Vote extends ActiveRecord
     const TYPE_UP = 'up';
     const TYPE_DOWN = 'down';
 
-    const ENTITY_QUESTION = 'question';
-    const ENTITY_ANSWER = 'answer';
+    const ENTITY_QUESTION = 0;
+    const ENTITY_ANSWER = 1;
 
     /**
      * @inheritdoc

@@ -108,7 +108,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
             'basePath' => __DIR__ . '/messages',
             'fileMap' => [
                 'qa/main' => 'main.php',
-                'qa/model' => 'main.php'
+                'qa/model' => 'model.php'
             ]
         ];
     }

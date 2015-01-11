@@ -30,6 +30,7 @@
 
 .qa-view-answer .qa-view-meta {
     float: right;
+    line-height: 30px;
 }
 
 .qa-view-heading {

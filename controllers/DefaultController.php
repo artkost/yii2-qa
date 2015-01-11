@@ -107,10 +107,7 @@ class DefaultController extends Controller
     public function actionFavorite()
     {
         $searchModel = new QuestionSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        $dataProvider->query
-            ->joinWith('favorites', true, 'RIGHT JOIN')
-            ->where([Question::tableName() . '.user_id' => Yii::$app->user->id]);
+        $dataProvider = $searchModel->searchFavorite(Yii::$app->request->getQueryParams(), Yii::$app->user->id);
 
         $models = $dataProvider->getModels();
 
@@ -123,9 +120,7 @@ class DefaultController extends Controller
     public function actionMy()
     {
         $searchModel = new  QuestionSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
-        $dataProvider->query
-            ->where(['user_id' => Yii::$app->user->id]);
+        $dataProvider = $searchModel->searchMy(Yii::$app->request->getQueryParams(), Yii::$app->user->id);
 
         $models = $dataProvider->getModels();
 

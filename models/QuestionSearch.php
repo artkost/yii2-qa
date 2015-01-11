@@ -2,6 +2,7 @@
 
 namespace artkost\qa\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -40,6 +41,35 @@ class QuestionSearch extends Question
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
         }
+
+        return $dataProvider;
+    }
+
+    /**
+     * @param $params
+     * @param int $userID
+     * @return ActiveDataProvider
+     */
+    public function searchFavorite($params, $userID)
+    {
+        $dataProvider = $this->search($params);
+        $dataProvider->query
+            ->joinWith('favorites', true, 'RIGHT JOIN')
+            ->where([Question::tableName() . '.user_id' => $userID]);
+
+        return $dataProvider;
+    }
+
+    /**
+     * @param $params
+     * @param $userID
+     * @return ActiveDataProvider
+     */
+    public function searchMy($params, $userID)
+    {
+        $dataProvider = $this->search($params);
+        $dataProvider->query
+            ->where(['user_id' => $userID]);
 
         return $dataProvider;
     }

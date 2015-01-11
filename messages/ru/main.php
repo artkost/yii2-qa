@@ -18,9 +18,9 @@
  */
 return [
     '' => '',
-    'Draft' => '',
+    'Draft' => 'Черновик',
     'Markdown powered content' => '',
-    'Publish' => '',
+    'Publish' => 'Опубликовать',
     'The requested page does not exist.' => '',
     'You are not allowed to perform this action.' => '',
     'Active' => 'Активные',

@@ -9,13 +9,13 @@ class m140314_120441_create_qa_answer_table extends \yii\db\Migration
     {
         $this->createTable(Answer::tableName(), [
             'id' => Schema::TYPE_PK,
-            'user_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
-            'question_id' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
-            'content' => 'TEXT NOT NULL',
+            'user_id' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'question_id' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'content' => Schema::TYPE_TEXT . ' NOT NULL',
             'votes' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
-            'status' => 'TINYINT(1) UNSIGNED NOT NULL DEFAULT ' . Answer::STATUS_PUBLISHED,
-            'created_at' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
-            'updated_at' => Schema::TYPE_INTEGER . ' UNSIGNED NOT NULL',
+            'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT ' . Answer::STATUS_PUBLISHED,
+            'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
+            'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
         ]);
     }
 

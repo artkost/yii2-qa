@@ -1,7 +1,13 @@
 {
     "name": "artkost/yii2-qa",
-    "description": "The Questions and Answers module inspired by Stack Overflow",
-    "keywords": ["yii", "qa", "faq"],
+    "description": "The Yii 2 Questions and Answers module inspired by Stack Overflow",
+    "keywords": [
+        "yii2",
+        "qa",
+        "question",
+        "answer",
+        "module"
+    ],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
     "support": {
@@ -15,7 +21,7 @@
         }
     ],
     "require": {
-        "yiisoft/yii2": "*",
+        "yiisoft/yii2": "~2.0.0",
         "yiisoft/yii2-bootstrap": "*",
         "bower-asset/typeahead.js": "0.10.*"
     },
@@ -25,7 +31,7 @@
         "codeception/verify": "*"
     },
     "autoload": {
-        "psr-4": { "artkost\\qa\\": "" }
+        "psr-4": {"artkost\\qa\\": ""}
     },
     "extra": {
         "bootstrap": "artkost\\qa\\Module"

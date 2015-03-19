@@ -6,6 +6,7 @@ use artkost\qa\models\Question;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\InvalidCallException;
+use yii\base\InvalidConfigException;
 use yii\helpers\Url;
 use yii\web\GroupUrlRule;
 
@@ -84,6 +85,13 @@ class Module extends \yii\base\Module implements BootstrapInterface
         'tag-suggest' => 'default/tag-suggest',
         '<alias>-<id>' => 'default/view'
     ];
+
+    public function init()
+    {
+        if (!class_exists(Yii::$app->get('user')->identityClass)) {
+            throw new InvalidConfigException('Identity class does not exist');
+        }
+    }
 
     /**
      * @inheritdoc

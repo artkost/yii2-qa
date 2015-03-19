@@ -1,6 +1,6 @@
 <?php
 /**
- * @var artkost\qa\models\Question[] $models
+ * @var artkost\qa\models\Favorite[] $models
  */
 use artkost\qa\Module;
 

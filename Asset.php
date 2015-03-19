@@ -12,28 +12,17 @@ use yii\web\AssetBundle;
  */
 class Asset extends AssetBundle
 {
-    /**
-     * @inheritdoc
-     */
     public $sourcePath = '@artkost/qa/assets';
-    /**
-     * @inheritdoc
-     */
     public $css = [
         'css/qa.css',
     ];
-    /**
-     * @inheritdoc
-     */
     public $js = [
         'js/qa.js',
     ];
-    /**
-     * @inheritdoc
-     */
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap\BootstrapPluginAsset',
+        'artkost\qa\TypeAheadAsset',
     ];
 }

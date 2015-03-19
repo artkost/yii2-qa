@@ -2,11 +2,12 @@
 
 namespace artkost\qa\models;
 
+use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
+use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
-use artkost\qa\ActiveRecord;
 use yii\db\ActiveQuery;
-use Yii;
 
 /**
  * Answer Model
@@ -34,7 +35,47 @@ class Answer extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'qa_answer';
+        return '{{%qa_answer}}';
+    }
+
+    /**
+     * @param int $question_id
+     * @return int
+     */
+    public static function removeRelation($question_id)
+    {
+        return self::deleteAll(
+            'question_id=:question_id',
+            [
+                ':question_id' => $question_id,
+            ]
+        );
+    }
+
+    /**
+     * Apply possible answers order to query
+     * @param ActiveQuery $query
+     * @param $order
+     * @return string
+     */
+    public static function applyOrder(ActiveQuery $query, $order)
+    {
+        switch ($order) {
+            case 'oldest':
+                $query->orderBy('created_at DESC');
+                break;
+
+            case 'active':
+                $query->orderBy('created_at ASC');
+                break;
+
+            case 'votes':
+            default:
+                $query->orderBy('votes DESC');
+                break;
+        }
+
+        return $order;
     }
 
     /**
@@ -70,9 +111,9 @@ class Answer extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => $this->t('ID'),
-            'content' => $this->t('Content'),
-            'status' => $this->t('Status'),
+            'id' => Module::t('model', 'ID'),
+            'content' => Module::t('model', 'Content'),
+            'status' => Module::t('model', 'Status'),
         ];
     }
 
@@ -82,7 +123,7 @@ class Answer extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne($this->getModule()->userClass, ['id' => 'user_id']);
+        return $this->hasOne(Yii::$app->user->identityClass, ['id' => 'user_id']);
     }
 
     /**
@@ -109,7 +150,15 @@ class Answer extends ActiveRecord
      */
     public function getUserName()
     {
-        return $this->user ? $this->getModule()->getUserName($this->user) : $this->user_id;
+        return $this->getUser() ? Module::getInstance()->getUserName($this->user) : $this->user_id;
+    }
+
+    /**
+     * @return Question
+     */
+    public function getQuestion()
+    {
+        return $this->hasOne(Question::className(), ['id' => 'question_id']);
     }
 
     /**
@@ -121,37 +170,11 @@ class Answer extends ActiveRecord
     }
 
     /**
-     * Apply possible answers order to query
-     * @param ActiveQuery $query
-     * @param $order
-     * @return ActiveQuery
-     */
-    public static function applyOrder(ActiveQuery $query, $order)
-    {
-        switch ($order) {
-            case 'oldest':
-                $query->orderBy('created_at DESC');
-                break;
-
-            case 'active':
-                $query->orderBy('created_at ASC');
-                break;
-
-            case 'votes':
-            default:
-                $query->orderBy('votes DESC');
-                break;
-        }
-
-        return $query;
-    }
-
-    /**
      * This is invoked after the record is saved.
      */
-    public function afterSave($insert, $changedAttribute)
+    public function afterSave($insert, $changedAttributes)
     {
-        parent::afterSave($insert, $changedAttribute);
+        parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
             Question::incrementAnswers($this->question_id);
@@ -165,5 +188,6 @@ class Answer extends ActiveRecord
     {
         parent::afterDelete();
         Question::decrementAnswers($this->question_id);
+        Vote::removeRelation($this);
     }
 }

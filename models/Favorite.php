@@ -2,8 +2,9 @@
 
 namespace artkost\qa\models;
 
-use Yii;
 use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
+use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -16,9 +17,52 @@ use yii\behaviors\TimestampBehavior;
  * @property string $question_id
  * @property string $created_at
  * @property string $created_ip
+ *
+ * @property Question $question
  */
 class Favorite extends ActiveRecord
 {
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%qa_favorite}}';
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public static function add($id)
+    {
+        $favorite = new self();
+        $favorite->attributes = ['question_id' => $id];
+
+        if ($favorite->save()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     * @throws \Exception
+     */
+    public static function remove($id)
+    {
+        /** @var \yii\db\ActiveQuery $query */
+        $query = self::find()->where(['question_id' => $id, 'user_id' => Yii::$app->user->id]);
+
+        if ($query->exists() && $query->one()->delete()) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * @inheritdoc
@@ -37,14 +81,18 @@ class Favorite extends ActiveRecord
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'created_ip'
                 ],
-                'value' => function ($event) { return ip2long(Yii::$app->request->getUserIP()); }
+                'value' => function ($event) {
+                    return ip2long(Yii::$app->request->getUserIP());
+                }
             ],
             [
                 'class' => AttributeBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_AFTER_FIND => 'created_ip'
                 ],
-                'value' => function ($event) { return long2ip($event->sender->created_ip); }
+                'value' => function ($event) {
+                    return long2ip($event->sender->created_ip);
+                }
             ],
             [
                 'class' => BlameableBehavior::className(),
@@ -53,14 +101,6 @@ class Favorite extends ActiveRecord
                 ],
             ]
         ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'qa_favorite';
     }
 
     /**
@@ -80,43 +120,20 @@ class Favorite extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'user_id' => 'User ID',
-            'question_id' => 'Question ID',
-            'created_at' => 'Created At',
-            'created_ip' => 'Created Ip',
+            'id' => Module::t('model', 'ID'),
+            'user_id' => Module::t('model', 'User ID'),
+            'question_id' => Module::t('model', 'Question ID'),
+            'created_at' => Module::t('model', 'Created At'),
+            'created_ip' => Module::t('model', 'Created Ip'),
         ];
     }
 
     /**
-     * Questions Relation
+     * Question Relation
      * @return \yii\db\ActiveQueryInterface
      */
-    public function getQuestions()
+    public function getQuestion()
     {
-        return $this->hasMany(Question::className(), ['id' => 'question_id']);
-    }
-
-    public static function add($id)
-    {
-        $favorite = new self();
-        $favorite->attributes = ['question_id'=>$id];
-        if ($favorite->save()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function remove($id)
-    {
-        /** @var \yii\db\ActiveQuery $query */
-        $query = self::find()->where(['question_id' => $id, 'user_id' => Yii::$app->user->id]);
-
-        if ($query->exists() && $query->one()->delete()) {
-            return true;
-        }
-
-        return false;
+        return $this->hasOne(Question::className(), ['id' => 'question_id']);
     }
 }

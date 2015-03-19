@@ -132,6 +132,29 @@ class Favorite extends ActiveRecord
      */
     public function getQuestion()
     {
-        return $this->hasOne(Question::className(), ['id' => 'question_id']);
+        return $this->hasMany(Question::className(), ['id' => 'question_id']);
+    }
+
+    public static function add($id)
+    {
+        $favorite = new self();
+        $favorite->attributes = ['question_id'=>$id];
+        if ($favorite->save()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function remove($id)
+    {
+        /** @var \yii\db\ActiveQuery $query */
+        $query = self::find()->where(['question_id' => $id, 'user_id' => Yii::$app->user->id]);
+
+        if ($query->exists() && $query->one()->delete()) {
+            return true;
+        }
+
+        return false;
     }
 }

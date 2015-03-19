@@ -12,12 +12,12 @@ use artkost\qa\models\Vote;
 use artkost\qa\Module;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception as DbException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\db\Exception as DbException;
 use yii\web\Response;
 
 
@@ -108,7 +108,6 @@ class DefaultController extends Controller
     {
         $searchModel = new QuestionSearch();
         $dataProvider = $searchModel->searchFavorite(Yii::$app->request->getQueryParams(), Yii::$app->user->id);
-
         $models = $dataProvider->getModels();
 
         return $this->render('index', compact('searchModel', 'models', 'dataProvider'));
@@ -119,7 +118,7 @@ class DefaultController extends Controller
      */
     public function actionMy()
     {
-        $searchModel = new  QuestionSearch();
+        $searchModel = new QuestionSearch();
         $dataProvider = $searchModel->searchMy(Yii::$app->request->getQueryParams(), Yii::$app->user->id);
 
         $models = $dataProvider->getModels();
@@ -147,6 +146,7 @@ class DefaultController extends Controller
     /**
      * @param $id
      * @throws NotFoundHttpException
+     * @return string
      */
     public function actionView($id)
     {
@@ -182,6 +182,7 @@ class DefaultController extends Controller
      * @throws ForbiddenHttpException
      * @throws DbException
      * @throws NotFoundHttpException
+     * @return string
      */
     public function actionEdit($id)
     {
@@ -214,6 +215,7 @@ class DefaultController extends Controller
      * @throws ForbiddenHttpException
      * @throws NotFoundHttpException
      * @throws \Exception
+     * @return string
      */
     public function actionDelete($id)
     {

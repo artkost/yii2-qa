@@ -8,7 +8,6 @@ use yii\base\BootstrapInterface;
 use yii\base\InvalidCallException;
 use yii\helpers\Url;
 use yii\web\GroupUrlRule;
-use yii\web\IdentityInterface;
 
 /**
  * This is the main module class for the QA module.
@@ -145,7 +144,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public function getMail()
     {
         if ($this->_mail === null) {
-            $this->_mail = Yii::$app->getMailer();
+            $this->_mail = Yii::$app->get('mailer');
             $this->_mail->htmlLayout = Yii::getAlias($this->id . '/mails/layouts/html');
             $this->_mail->textLayout = Yii::getAlias($this->id . '/mails/layouts/text');
             $this->_mail->viewPath = Yii::getAlias($this->id . '/mails/views');

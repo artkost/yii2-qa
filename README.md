@@ -30,11 +30,10 @@ Once the extension is installed, simply modify your application configuration as
 
 ```php
 return [
-	'modules' => [
-		'qa' => 'artkost\qa\Module',
+	'qa' => [
+		'class' => 'artkost\qa\Module',
 		'userClass' => 'app\models\User',
 		'userNameFormatter' => 'getUserName'
-		...
 	],
 	...
 ];
@@ -42,7 +41,7 @@ return [
 
 Install Migrations
 
-```php yii migrate --migrationPath=@vendor/artkost/yii2-qa/migrations```
+```php yii migrate/up --migrationPath=@vendor/artkost/yii2-qa/migrations```
 
 You can then access QA through the following URL:
 

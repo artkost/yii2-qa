@@ -3,6 +3,7 @@
 namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
 
 /**
  * Tag Model
@@ -22,40 +23,7 @@ class Tag extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'qa_tag';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['name'], 'required'],
-            [['name'], 'string'],
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => $this->t('ID'),
-            'name' => $this->t('Name'),
-            'frequency' => $this->t('Frequency'),
-        ];
-    }
-
-    /**
-     * Convert string of comma separated values to array
-     * @param $tags
-     * @return array
-     */
-    public static function string2Array($tags)
-    {
-        return preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY);
+        return '{{%qa_tag}}';
     }
 
     /**
@@ -66,6 +34,16 @@ class Tag extends ActiveRecord
     public static function array2String($tags)
     {
         return implode(', ', $tags);
+    }
+
+    /**
+     * Convert string of comma separated values to array
+     * @param $tags
+     * @return array
+     */
+    public static function string2Array($tags)
+    {
+        return preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY);
     }
 
     /**
@@ -121,6 +99,7 @@ class Tag extends ActiveRecord
      */
     public static function suggest($keyword, $limit = 20)
     {
+        /** @var self[] $tags */
         $tags = self::find()
             ->where(['like', 'name', $keyword])
             ->orderBy('frequency DESC, name')
@@ -130,9 +109,32 @@ class Tag extends ActiveRecord
         $names = array();
 
         foreach ($tags as $tag) {
-            $names[] = $tag->name;
+            $names[] = ['word' => $tag->name];
         }
 
         return $names;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['name'], 'required'],
+            [['name'], 'string'],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Module::t('model', 'ID'),
+            'name' => Module::t('model', 'Name'),
+            'frequency' => Module::t('model', 'Frequency'),
+        ];
     }
 }

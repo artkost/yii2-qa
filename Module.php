@@ -2,9 +2,13 @@
 
 namespace artkost\qa;
 
-use yii\base\InvalidCallException;
-use yii\helpers\Url;
+use artkost\qa\models\Question;
 use Yii;
+use yii\base\BootstrapInterface;
+use yii\base\InvalidCallException;
+use yii\base\InvalidConfigException;
+use yii\helpers\Url;
+use yii\web\GroupUrlRule;
 
 /**
  * This is the main module class for the QA module.
@@ -42,18 +46,20 @@ use Yii;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Module extends \yii\base\Module
+class Module extends \yii\base\Module implements BootstrapInterface
 {
+    protected $_mail;
+
     /**
      * @inheritdoc
      */
     public $controllerNamespace = '\artkost\qa\controllers';
 
     /**
-     * User model class
-     * @var string
+     * Allow users to add tags
+     * @var bool
      */
-    public $userClass = '\app\models\User';
+    public $allowUserGeneratedTags = false;
 
     /**
      * Formatter function name in user model, or callable
@@ -61,31 +67,72 @@ class Module extends \yii\base\Module
      */
     public $userNameFormatter = 'getId';
 
+    /**
+     * @var string The prefix for user module URL.
+     * @See [[GroupUrlRule::prefix]]
+     */
+    public $urlPrefix = 'qa';
+
+    /**
+     * @var array The rules to be used in URL management.
+     */
+    public $urlRules = [
+        'ask' => 'default/ask',
+        'my' => 'default/my',
+        'favorite' => 'default/favorite',
+        '' => 'default/index',
+        'tag/<tags>' => 'default/tags',
+        'tag-suggest' => 'default/tag-suggest',
+        '<alias>-<id>' => 'default/view'
+    ];
+
     public function init()
     {
-        parent::init();
-
-        $i18n = Yii::$app->i18n;
-
-        if (!isset($i18n->translations['artkost\qa'])) {
-            $i18n->translations['artkost\qa'] = [
-                'class' => 'yii\i18n\PhpMessageSource',
-                'sourceLanguage' => 'en',
-                'basePath' => '@artkost/qa/messages',
-            ];
+        if (!class_exists(Yii::$app->get('user')->identityClass)) {
+            throw new InvalidConfigException('Identity class does not exist');
         }
     }
 
     /**
+     * @inheritdoc
+     */
+    public function bootstrap($app)
+    {
+        if ($app instanceof \yii\console\Application) {
+            $this->controllerNamespace = '\artkost\qa\commands';
+        } else if ($app instanceof \yii\web\Application) {
+            $configUrlRule = [
+                'routePrefix' => $this->id,
+                'prefix' => $this->urlPrefix,
+                'rules' => $this->urlRules
+            ];
+
+            $app->get('urlManager')->rules[] = new GroupUrlRule($configUrlRule);
+        }
+
+        $app->get('i18n')->translations['artkost/qa/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'basePath' => __DIR__ . '/messages',
+            'fileMap' => [
+                'qa/main' => 'main.php',
+                'qa/model' => 'model.php'
+            ]
+        ];
+    }
+
+
+
+    /**
      * Alias function for [[Yii::t()]]
+     * @param $category
      * @param $message
      * @param array $params
      * @param null $language
      * @return string
      */
-    public static function t($message, $params = [], $language = null)
+    public static function t($category, $message, $params = [], $language = null)
     {
-        return Yii::t('artkost\qa', $message, $params, $language);
+        return Yii::t('artkost/qa/' . $category, $message, $params, $language);
     }
 
     /**
@@ -100,23 +147,35 @@ class Module extends \yii\base\Module
     }
 
     /**
+     * @return \yii\swiftmailer\Mailer Mailer instance with predefined templates.
+     */
+    public function getMail()
+    {
+        if ($this->_mail === null) {
+            $this->_mail = Yii::$app->get('mailer');
+            $this->_mail->htmlLayout = Yii::getAlias($this->id . '/mails/layouts/html');
+            $this->_mail->textLayout = Yii::getAlias($this->id . '/mails/layouts/text');
+            $this->_mail->viewPath = Yii::getAlias($this->id . '/mails/views');
+
+            if (isset(Yii::$app->params['robotEmail']) && Yii::$app->params['robotEmail'] !== null) {
+                $this->_mail->messageConfig['from'] = !isset(Yii::$app->params['robotName']) ? Yii::$app->params['robotEmail'] : [Yii::$app->params['robotEmail'] => Yii::$app->params['robotName']];
+            }
+        }
+        return $this->_mail;
+    }
+
+    /**
      * @param \app\models\User $model
      * @return string
      * @throws InvalidCallException
      */
     public function getUserName($model)
     {
-        //if (method_exists($model, $this->userNameFormatter)) {
+        if (is_callable($this->userNameFormatter)) {
+            return call_user_func($this->userNameFormatter, $model);
+        } else if (method_exists($model, $this->userNameFormatter)) {
             return call_user_func([$model, $this->userNameFormatter]);
-        //} else throw new InvalidCallException('Invalid userNameFormatter function');
-    }
-
-    /**
-     * Check if is given user unique
-     */
-    public function isUserUnique()
-    {
-        return !Yii::$app->user->isGuest;
+        } else throw new InvalidCallException('Invalid userNameFormatter function');
     }
 
 }

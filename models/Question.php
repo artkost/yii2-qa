@@ -3,6 +3,7 @@
 namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
+use artkost\qa\Module;
 use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
@@ -99,12 +100,12 @@ class Question extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => $this->t('ID'),
-            'title' => $this->t('Title'),
-            'alias' => $this->t('Alias'),
-            'content' => $this->t('Content'),
-            'tags' => $this->t('Tags'),
-            'status' => $this->t('Status'),
+            'id' => Module::t('model', 'ID'),
+            'title' => Module::t('model', 'Title'),
+            'alias' => Module::t('model', 'Alias'),
+            'content' => Module::t('model', 'Content'),
+            'tags' => Module::t('model', 'Tags'),
+            'status' => Module::t('model', 'Status'),
         ];
     }
 
@@ -133,6 +134,8 @@ class Question extends ActiveRecord
     {
         parent::afterDelete();
         Tag::updateFrequency($this->tags, '');
+        Vote::removeRelation($this);
+        Answer::removeRelation($this->id);
     }
 
     /**
@@ -143,29 +146,44 @@ class Question extends ActiveRecord
         return Tag::string2Array($this->tags);
     }
 
+    /**
+     * @return string
+     */
     public function getUpdated()
     {
         return Yii::$app->formatter->asTime($this->updated_at);
     }
 
+    /**
+     * @return string
+     */
     public function getCreated()
     {
         return Yii::$app->formatter->asTime($this->created_at);
     }
 
+    /**
+     * @return int|string
+     * @throws \yii\base\InvalidConfigException
+     */
     public function getUserName()
     {
-        return $this->user ? $this->getModule()->getUserName($this->user) : $this->user_id;
+        return $this->user ? Module::getInstance()->getUserName($this->user) : $this->user_id;
     }
 
     /**
      * Check if current user can edit this model
+     * @return bool
      */
     public function isAuthor()
     {
         return $this->user_id == Yii::$app->user->id;
     }
 
+    /**
+     * @param bool $user
+     * @return bool
+     */
     public function isFavorite($user = false)
     {
         $user = ($user) ? $user : Yii::$app->user;
@@ -173,6 +191,26 @@ class Question extends ActiveRecord
         return Favorite::find()->where(['user_id' => $user->id, 'question_id' => $this->id])->exists();
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function haveDraft($data)
+    {
+        return isset($data['draft']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDraft()
+    {
+        return $this->status == self::STATUS_DRAFT;
+    }
+
+    /**
+     * @return bool
+     */
     public function toggleFavorite()
     {
         if ($this->isFavorite()) {
@@ -235,11 +273,17 @@ class Question extends ActiveRecord
         return $this->user_id !== Yii::$app->user->id;
     }
 
+    /**
+     * @param $id
+     */
     public static function incrementAnswers($id)
     {
         self::updateAllCounters(['answers' => 1], ['id' => $id]);
     }
 
+    /**
+     * @param $id
+     */
     public static function decrementAnswers($id)
     {
         self::updateAllCounters(['answers' => -1], ['id' => $id]);

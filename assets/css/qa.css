@@ -1,7 +1,7 @@
 @import "qa.index.css";
 @import "qa.view.css";
 @import "qa.edit.css";
-
+@import "qa.typeahead.css";
 
 .qa-list {
     margin-top: 10px;
@@ -20,7 +20,7 @@
     display: inline-block;
     vertical-align: top;
     margin: 0 5px 0 0;
-    width: 64px;
+    min-width: 64px;
     height: 54px;
     text-align: center;
     padding: 4px;
@@ -48,17 +48,17 @@
     color: #a52211;
 }
 
-.qa-panel .mini-counts {
+.qa-panel-count {
     height: 25px;
     font-size: 160%;
     font-weight: normal;
 }
 
-.qa-panel .votes {
+.qa-panel.votes {
     color: #555;
 }
 
-.qa-panel .views {
+.qa-panel.views {
     color: #999;
 }
 
@@ -83,11 +83,15 @@
     display: block;
     color: #555;
     font-size: 24px;
+    padding: 16px;
 }
 
 .qa-favorite {
-    font-size: 32px;
     text-align: center;
+}
+
+.qa-favorite-link {
+    font-size: 32px;
 }
 
 .qa-favorite-active .qa-favorite-link:hover,

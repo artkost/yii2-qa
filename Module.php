@@ -2,13 +2,9 @@
 
 namespace artkost\qa;
 
-use artkost\qa\models\Question;
 use Yii;
-use yii\base\BootstrapInterface;
 use yii\base\InvalidCallException;
-use yii\base\InvalidConfigException;
 use yii\helpers\Url;
-use yii\web\GroupUrlRule;
 
 /**
  * This is the main module class for the QA module.
@@ -34,9 +30,13 @@ use yii\web\GroupUrlRule;
  *
  * ~~~
  * 'rules' => [
- *     'qa' => 'qa',
- *     'qa/<controller>' => 'qa/<controller>',
- *     'qa/<controller>/<action>' => 'qa/<controller>/<action>',
+ *      'qa/ask' => 'default/ask',
+ *      'qa/my' => 'default/my',
+ *      'qa/favorite' => 'default/favorite',
+ *      'qa' => 'default/index',
+ *      'qa/tag/<tags>' => 'default/tags',
+ *      'qa/tag-suggest' => 'default/tag-suggest',
+ *      'qa/<alias>-<id>' => 'default/view'
  *     ...
  * ],
  * ~~~
@@ -46,81 +46,13 @@ use yii\web\GroupUrlRule;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Module extends \yii\base\Module implements BootstrapInterface
+class Module extends \yii\base\Module
 {
-    protected $_mail;
-
-    /**
-     * @inheritdoc
-     */
-    public $controllerNamespace = '\artkost\qa\controllers';
-
-    /**
-     * Allow users to add tags
-     * @var bool
-     */
-    public $allowUserGeneratedTags = false;
-
     /**
      * Formatter function name in user model, or callable
      * @var string|callable
      */
     public $userNameFormatter = 'getId';
-
-    /**
-     * @var string The prefix for user module URL.
-     * @See [[GroupUrlRule::prefix]]
-     */
-    public $urlPrefix = 'qa';
-
-    /**
-     * @var array The rules to be used in URL management.
-     */
-    public $urlRules = [
-        'ask' => 'default/ask',
-        'my' => 'default/my',
-        'favorite' => 'default/favorite',
-        '' => 'default/index',
-        'tag/<tags>' => 'default/tags',
-        'tag-suggest' => 'default/tag-suggest',
-        '<alias>-<id>' => 'default/view'
-    ];
-
-    public function init()
-    {
-        if (!class_exists(Yii::$app->get('user')->identityClass)) {
-            throw new InvalidConfigException('Identity class does not exist');
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function bootstrap($app)
-    {
-        if ($app instanceof \yii\console\Application) {
-            $this->controllerNamespace = '\artkost\qa\commands';
-        } else if ($app instanceof \yii\web\Application) {
-            $configUrlRule = [
-                'routePrefix' => $this->id,
-                'prefix' => $this->urlPrefix,
-                'rules' => $this->urlRules
-            ];
-
-            $app->get('urlManager')->rules[] = new GroupUrlRule($configUrlRule);
-        }
-
-        $app->get('i18n')->translations['artkost/qa/*'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => __DIR__ . '/messages',
-            'fileMap' => [
-                'qa/main' => 'main.php',
-                'qa/model' => 'model.php'
-            ]
-        ];
-    }
-
-
 
     /**
      * Alias function for [[Yii::t()]]
@@ -144,24 +76,6 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public static function url($route, $scheme = false)
     {
         return Url::toRoute($route, $scheme);
-    }
-
-    /**
-     * @return \yii\swiftmailer\Mailer Mailer instance with predefined templates.
-     */
-    public function getMail()
-    {
-        if ($this->_mail === null) {
-            $this->_mail = Yii::$app->get('mailer');
-            $this->_mail->htmlLayout = Yii::getAlias($this->id . '/mails/layouts/html');
-            $this->_mail->textLayout = Yii::getAlias($this->id . '/mails/layouts/text');
-            $this->_mail->viewPath = Yii::getAlias($this->id . '/mails/views');
-
-            if (isset(Yii::$app->params['robotEmail']) && Yii::$app->params['robotEmail'] !== null) {
-                $this->_mail->messageConfig['from'] = !isset(Yii::$app->params['robotName']) ? Yii::$app->params['robotEmail'] : [Yii::$app->params['robotEmail'] => Yii::$app->params['robotName']];
-            }
-        }
-        return $this->_mail;
     }
 
     /**

@@ -98,7 +98,6 @@ $answerOrders = [
 
         <div class="qa-view-answer-form">
             <?= $this->render('parts/form-answer', ['model' => $answer, 'action' => Module::url(['answer', 'id' => $model->id])]); ?>
-
         </div>
     </div>
 </div>

@@ -3,11 +3,8 @@
 namespace artkost\qa;
 
 use Yii;
-use yii\base\BootstrapInterface;
 use yii\base\InvalidCallException;
-use yii\base\InvalidConfigException;
 use yii\helpers\Url;
-use yii\web\GroupUrlRule;
 
 /**
  * This is the main module class for the QA module.
@@ -61,13 +58,6 @@ class Module extends \yii\base\Module
      * @var string|callable
      */
     public $userNameFormatter = 'getId';
-
-    public function init()
-    {
-        if (!class_exists(Yii::$app->get('user')->identityClass)) {
-            throw new InvalidConfigException('Identity class does not exist');
-        }
-    }
 
     /**
      * Alias function for [[Yii::t()]]

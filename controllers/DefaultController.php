@@ -191,7 +191,6 @@ class DefaultController extends Controller
 
         if ($model->isAuthor()) {
             if ($model->load($_POST)) {
-
                 if ($model->haveDraft($_POST)) {
                     $model->status = Question::STATUS_DRAFT;
                 }
@@ -232,12 +231,21 @@ class DefaultController extends Controller
 
     /**
      * @return string|Response
+     * @throws DbException
      */
     public function actionAsk()
     {
         $model = new Question();
 
-        if ($model->load($_POST) && $model->save()) {
+        if ($model->load($_POST)) {
+            if ($model->haveDraft($_POST)) {
+                $model->status = Question::STATUS_DRAFT;
+            }
+
+            if (!$model->save()) {
+                throw new DbException(Module::t('main', 'Error create question'));
+            }
+
             Yii::$app->session->setFlash('questionFormSubmitted');
             return $this->redirect(['view', 'id' => $model->id]);
         } else {

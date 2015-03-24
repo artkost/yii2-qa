@@ -66,15 +66,6 @@ class Question extends ActiveRecord
                 }
             ],
             [
-                'class' => AttributeBehavior::className(),
-                'attributes' => [
-                    ActiveRecord::EVENT_BEFORE_INSERT => 'status'
-                ],
-                'value' => function ($event) {
-                    return self::STATUS_PUBLISHED;
-                }
-            ],
-            [
                 'class' => BlameableBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
@@ -120,6 +111,7 @@ class Question extends ActiveRecord
 
     /**
      * This is invoked after the record is saved.
+     * @inheritdoc
      */
     public function afterSave($insert, $changedAttributes)
     {

@@ -34,6 +34,6 @@
         "psr-4": {"artkost\\qa\\": ""}
     },
     "extra": {
-        "bootstrap": "artkost\\qa\\Module"
+        "bootstrap": "artkost\\qa\\Bootstrap"
     }
 }

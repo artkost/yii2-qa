@@ -49,11 +49,6 @@ use yii\helpers\Url;
 class Module extends \yii\base\Module
 {
     /**
-     * @inheritdoc
-     */
-    public $controllerNamespace = '\artkost\qa\controllers';
-
-    /**
      * Formatter function name in user model, or callable
      * @var string|callable
      */

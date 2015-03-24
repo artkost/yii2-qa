@@ -4,6 +4,9 @@ namespace artkost\qa;
 
 use yii\base\BootstrapInterface;
 use yii\base\InvalidConfigException;
+use yii\console\Application as ConsoleApplication;
+use yii\i18n\PhpMessageSource;
+use artkost\qa\Module;
 
 class Bootstrap implements BootstrapInterface
 {
@@ -12,21 +15,20 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
-        if ($app instanceof \yii\console\Application) {
-            $this->controllerNamespace = '\artkost\qa\commands';
-        } else {
-            if (!class_exists($app->get('user')->identityClass)) {
-                throw new InvalidConfigException('Identity class does not exist');
+        /** @var $module Module */
+        if ($app->hasModule('qa') && ($module = $app->getModule('qa')) instanceof Module) {
+            if ($app instanceof ConsoleApplication) {
+                $module->controllerNamespace = 'artkost\qa\commands';
+            } else {
+                if (!class_exists($app->get('user')->identityClass)) {
+                    throw new InvalidConfigException('Yii::$app->user->identityClass does not exist');
+                }
             }
-        }
 
-        $app->get('i18n')->translations['artkost/qa/*'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => __DIR__ . '/messages',
-            'fileMap' => [
-                'qa/main' => 'main.php',
-                'qa/model' => 'model.php'
-            ]
-        ];
+            $app->get('i18n')->translations['artkost/qa*'] = [
+                'class' => PhpMessageSource::className(),
+                'basePath' => __DIR__ . '/messages'
+            ];
+        }
     }
 }

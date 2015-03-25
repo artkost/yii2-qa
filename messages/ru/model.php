@@ -17,6 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Created At' => 'Дата создания',
+    'Created Ip' => 'IP создателя',
+    'Question ID' => 'ID Вопроса',
+    'User ID' => 'ID Пользователя',
     'Alias' => 'Псевдоним',
     'Content' => 'Содержание',
     'Frequency' => 'Частота',

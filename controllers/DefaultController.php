@@ -173,7 +173,7 @@ class DefaultController extends Controller
 
             return $this->render('view', compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
         } else {
-            throw new NotFoundHttpException(Module::t('main', 'The requested page does not exist.'));
+            $this->notFoundException();
         }
     }
 
@@ -205,7 +205,7 @@ class DefaultController extends Controller
 
             return $this->render('edit', compact('model'));
         } else {
-            throw new ForbiddenHttpException(Module::t('main', 'You are not allowed to perform this action.'));
+            $this->forbiddenException();
         }
     }
 
@@ -225,7 +225,7 @@ class DefaultController extends Controller
             $model->delete();
             return $this->redirect(['index']);
         } else {
-            throw new ForbiddenHttpException(Module::t('main', 'You are not allowed to perform this action.'));
+            $this->forbiddenException();
         }
     }
 
@@ -309,15 +309,19 @@ class DefaultController extends Controller
     {
         $model = new Answer(['question_id' => $id]);
 
+        /** @var Question $question */
+        $question = $model->question;
+
+        if (!$question) {
+            $this->notFoundException();
+        }
+
         if ($model->load($_POST) && $model->save()) {
             Yii::$app->session->setFlash('answerFormSubmitted');
 
-            /** @var Question $question */
-            $question = $model->question;
-
             return $this->redirect(['view', 'id' => $question->id, 'alias' => $question->alias]);
         } else {
-            return $this->render('answer', compact('model'));
+            return $this->render('answer', compact('model', 'question'));
         }
     }
 
@@ -354,14 +358,29 @@ class DefaultController extends Controller
      * @param string $modelClass
      * @param null $id
      * @return ActiveRecord
-     * @throws \yii\web\NotFoundHttpException
      */
     protected function findModel($modelClass, $id = null)
     {
         if (($model = $modelClass::find()->where(['id' => $id])->one()) !== null) {
             return $model;
         } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            $this->notFoundException();
         }
+    }
+
+    /**
+     * @throws NotFoundHttpException
+     */
+    protected function notFoundException()
+    {
+        throw new NotFoundHttpException(Module::t('main', 'The requested page does not exist.'));
+    }
+
+    /**
+     * @throws ForbiddenHttpException
+     */
+    protected function forbiddenException()
+    {
+        throw new ForbiddenHttpException(Module::t('main', 'You are not allowed to perform this action.'));
     }
 }

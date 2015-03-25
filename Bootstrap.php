@@ -24,11 +24,15 @@ class Bootstrap implements BootstrapInterface
                     throw new InvalidConfigException('Yii::$app->user->identityClass does not exist');
                 }
             }
-
-            $app->get('i18n')->translations['artkost/qa*'] = [
-                'class' => PhpMessageSource::className(),
-                'basePath' => __DIR__ . '/messages'
-            ];
         }
+
+        $app->i18n->translations[Module::TRANSLATION . '*'] = [
+            'class' => PhpMessageSource::className(),
+            'basePath' => __DIR__ . '/messages',
+            'fileMap' => [
+                Module::TRANSLATION . 'main' => 'main.php',
+                Module::TRANSLATION . 'model' => 'model.php'
+            ]
+        ];
     }
 }

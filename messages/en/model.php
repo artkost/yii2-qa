@@ -19,10 +19,14 @@
 return [
     'Alias' => '',
     'Content' => '',
+    'Created At' => '',
+    'Created Ip' => '',
     'Frequency' => '',
     'ID' => '',
     'Name' => '',
+    'Question ID' => '',
     'Status' => '',
     'Tags' => '',
     'Title' => '',
+    'User ID' => '',
 ];

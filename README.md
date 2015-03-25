@@ -1,6 +1,9 @@
 Questions and Answers for Yii 2
 =======
 
+[![Packagist Version](https://img.shields.io/packagist/v/artkost/yii2-qa.svg?style=flat-square)](https://packagist.org/packages/artkost/yii2-qa)
+[![Total Downloads](https://img.shields.io/packagist/dt/artkost/yii2-qa.svg?style=flat-square)](https://packagist.org/packages/artkost/yii2-qa)
+
 Extension provides web QA inspired by Stack Overflow.
 
 Installation
@@ -32,7 +35,6 @@ Once the extension is installed, simply modify your application configuration as
 return [
 	'qa' => [
 		'class' => 'artkost\qa\Module',
-		'userClass' => 'app\models\User',
 		'userNameFormatter' => 'getUserName'
 	],
 	...
@@ -47,4 +49,14 @@ You can then access QA through the following URL:
 
 ```
 http://localhost/path/to/index.php?r=qa
+```
+
+Widgets
+-----
+
+You can use available widgets
+```php
+<?= Tags::widget(['limit' => 20]) ?>
+<?= Popular::widget(['limit' => 20, 'views' => 20]) ?>
+<?= Favorite::widget(['userID' => Yii::$app->user->id, 'limit' => 20]) ?>
 ```

@@ -49,6 +49,11 @@ use yii\helpers\Url;
 class Module extends \yii\base\Module
 {
     /**
+     * Translation category for module
+     */
+    const TRANSLATION = 'artkost/qa/';
+
+    /**
      * Formatter function name in user model, or callable
      * @var string|callable
      */
@@ -64,7 +69,7 @@ class Module extends \yii\base\Module
      */
     public static function t($category, $message, $params = [], $language = null)
     {
-        return Yii::t('artkost/qa/' . $category, $message, $params, $language);
+        return Yii::t(self::TRANSLATION . $category, $message, $params, $language);
     }
 
     /**

@@ -50,8 +50,6 @@ $answerOrders = [
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
 

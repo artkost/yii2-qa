@@ -1,5 +1,11 @@
 .qa-view-text {
     min-height: 100px;
+    overflow: hidden;
+}
+
+.qa-view-text img {
+    max-width: 100%;
+    width: auto;
 }
 
 .qa-view-meta {

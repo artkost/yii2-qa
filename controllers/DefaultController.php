@@ -193,6 +193,8 @@ class DefaultController extends Controller
             if ($model->load($_POST)) {
                 if ($model->haveDraft($_POST)) {
                     $model->status = Question::STATUS_DRAFT;
+                } else {
+                    $model->status = Question::STATUS_PUBLISHED;
                 }
 
                 if (!$model->save()) {

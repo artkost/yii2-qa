@@ -14,7 +14,7 @@ use yii\helpers\Html;
                     <div class="qa-panel-count"><?= $model->votes ?></div>
                     <div><?= Module::t('main', 'votes')?></div>
                 </div>
-                <div class="qa-panel status-unanswered">
+                <div class="qa-panel <?= ($model->answers > 0) ? 'status-answered' : 'status-unanswered' ?>">
                     <div class="qa-panel-count"><?= $model->answers ?></div>
                     <div><?= Module::t('main', 'answers')?></div>
                 </div>

@@ -8,7 +8,9 @@ use Yii;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\HtmlPurifier;
 use yii\helpers\Inflector;
+use yii\helpers\Markdown;
 
 /**
  * Question Model
@@ -42,11 +44,33 @@ class Question extends ActiveRecord
     protected $_oldTags = '';
 
     /**
+     * Markdown processed content
+     * @var string
+     */
+    public $body;
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
     {
         return '{{%qa_question}}';
+    }
+
+    /**
+     * @param $id
+     */
+    public static function incrementAnswers($id)
+    {
+        self::updateAllCounters(['answers' => 1], ['id' => $id]);
+    }
+
+    /**
+     * @param $id
+     */
+    public static function decrementAnswers($id)
+    {
+        self::updateAllCounters(['answers' => -1], ['id' => $id]);
     }
 
     /**
@@ -63,6 +87,15 @@ class Question extends ActiveRecord
                 ],
                 'value' => function ($event) {
                     return Inflector::slug($event->sender->title);
+                }
+            ],
+            [
+                'class' => AttributeBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_AFTER_FIND => 'body'
+                ],
+                'value' => function ($event) {
+                    return HtmlPurifier::process(Markdown::process($event->sender->content, 'gfm'));
                 }
             ],
             [
@@ -131,36 +164,11 @@ class Question extends ActiveRecord
     }
 
     /**
-     * @return array a list of links that point to the post list filtered by every tag of this post
+     * Normalizes the user-entered tags.
      */
-    public function getTagsList()
+    public function normalizeTags($attribute, $params)
     {
-        return Tag::string2Array($this->tags);
-    }
-
-    /**
-     * @return string
-     */
-    public function getUpdated()
-    {
-        return Yii::$app->formatter->asTime($this->updated_at);
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreated()
-    {
-        return Yii::$app->formatter->asTime($this->created_at);
-    }
-
-    /**
-     * @return int|string
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getUserName()
-    {
-        return $this->user ? Module::getInstance()->getUserName($this->user) : $this->user_id;
+        $this->tags = Tag::array2String(array_unique(Tag::string2Array($this->tags)));
     }
 
     /**
@@ -201,6 +209,15 @@ class Question extends ActiveRecord
     }
 
     /**
+     * Check if is given user unique
+     * @return bool
+     */
+    public function isUserUnique()
+    {
+        return $this->user_id !== Yii::$app->user->id;
+    }
+
+    /**
      * @return bool
      */
     public function toggleFavorite()
@@ -210,6 +227,39 @@ class Question extends ActiveRecord
         } else {
             return Favorite::add($this->id);
         }
+    }
+
+    /**
+     * @return array a list of links that point to the post list filtered by every tag of this post
+     */
+    public function getTagsList()
+    {
+        return Tag::string2Array($this->tags);
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdated()
+    {
+        return Module::getInstance()->getDate($this, 'updated_at');
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreated()
+    {
+        return Module::getInstance()->getDate($this, 'created_at');
+    }
+
+    /**
+     * @return int|string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getUserName()
+    {
+        return $this->user ? Module::getInstance()->getUserName($this->user, 'id') : $this->user_id;
     }
 
     /**
@@ -246,38 +296,5 @@ class Question extends ActiveRecord
     public function getFavorites()
     {
         return $this->hasMany(Favorite::className(), ['question_id' => 'id']);
-    }
-
-    /**
-     * Normalizes the user-entered tags.
-     */
-    public function normalizeTags($attribute, $params)
-    {
-        $this->tags = Tag::array2String(array_unique(Tag::string2Array($this->tags)));
-    }
-
-    /**
-     * Check if is given user unique
-     * @return bool
-     */
-    public function isUserUnique()
-    {
-        return $this->user_id !== Yii::$app->user->id;
-    }
-
-    /**
-     * @param $id
-     */
-    public static function incrementAnswers($id)
-    {
-        self::updateAllCounters(['answers' => 1], ['id' => $id]);
-    }
-
-    /**
-     * @param $id
-     */
-    public static function decrementAnswers($id)
-    {
-        self::updateAllCounters(['answers' => -1], ['id' => $id]);
     }
 }

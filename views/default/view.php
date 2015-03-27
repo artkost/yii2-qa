@@ -40,7 +40,7 @@ $answerOrders = [
 
                 <div class="panel panel-default">
                     <div class="panel-body qa-view-text">
-                        <?= Html::encode($model->content) ?>
+                        <?= $model->body ?>
                     </div>
                     <div class="panel-footer">
                         <div class="qa-view-meta">
@@ -74,7 +74,7 @@ $answerOrders = [
                 <div class="qa-view-answer panel panel-default">
                     <div class="panel-body">
                         <div class="qa-view-text">
-                            <?= Html::encode($row->content) ?>
+                            <?= $row->body ?>
                         </div>
                     </div>
                     <div class="panel-footer">

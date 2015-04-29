@@ -31,13 +31,15 @@ class QuestionSearch extends Question
     {
         $query = self::find()->with('user');
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+        $query->andWhere(['status' => self::STATUS_PUBLISHED]);
 
         if (isset($params['tags']) && $params['tags']) {
             $query->andWhere(['like', 'tags', $params['tags']]);
         }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
 
         if (!($this->load($params) && $this->validate())) {
             return $dataProvider;
@@ -56,7 +58,7 @@ class QuestionSearch extends Question
         $dataProvider = $this->search($params);
         $dataProvider->query
             ->joinWith('favorites', true, 'RIGHT JOIN')
-            ->where([Question::tableName() . '.user_id' => $userID]);
+            ->andWhere([self::tableName() . '.user_id' => $userID]);
 
         return $dataProvider;
     }
@@ -70,6 +72,7 @@ class QuestionSearch extends Question
     {
         $dataProvider = $this->search($params);
         $dataProvider->query
+            ->andWhere(['status' => self::STATUS_DRAFT])
             ->where(['user_id' => $userID]);
 
         return $dataProvider;

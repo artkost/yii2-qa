@@ -31,6 +31,9 @@ use yii\helpers\Html;
                 <h4 class="question-heading list-group-item-heading">
                     <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias]) ?>"
                        class="question-link" title="<?= Html::encode($model->title) ?>"><?= Html::encode($model->title) ?></a>
+                    <?php if ($model->isDraft()): ?>
+                        <small><span class="label label-default"><?= Module::t('main', 'Draft') ?></span></small>
+                    <?php endif; ?>
                 </h4>
                 <div class="question-tags">
                     <?= $this->render('tags-list', ['model' => $model]) ?>

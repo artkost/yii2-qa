@@ -31,6 +31,8 @@ return [
     'Update' => '',
     'What\'s your question? Be specific.' => '',
     'Active' => 'Activo',
+    'Oldest' => '',
+    'Votes' => '',
     'Add to favorite' => 'Agregar a favoritos',
     'Ask a Question' => 'Hacer una pregunta',
     'Comma separated list of tags' => 'Lista de etiquetas separadas por comas',

@@ -20,6 +20,8 @@ return [
     'Answer is correct' => 'Этот ответ правильный',
     'Mark answer as correct' => 'Пометить ответ как правильный',
     'Active' => 'Активные',
+    'Oldest' => 'Старые',
+    'Votes' => 'Голоса',
     'Add to favorite' => 'Добавить в избранное',
     'Answer' => 'Ответ',
     'Answer to {title}' => 'Ответ на {title}',

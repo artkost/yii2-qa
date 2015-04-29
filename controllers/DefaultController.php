@@ -155,6 +155,12 @@ class DefaultController extends Controller
         $model = Question::find()->with('user')->where(['id' => $id])->one();
 
         if ($model) {
+            if ($model->isDraft()) {
+                if (! $model->isAuthor()) {
+                    $this->notFoundException();
+                }
+            }
+
             if ($model->isUserUnique()) {
                 $model->updateCounters(['views' => 1]);
             }

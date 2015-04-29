@@ -5,9 +5,12 @@ namespace artkost\qa\models;
 use artkost\qa\ActiveRecord;
 use artkost\qa\Module;
 use Yii;
+use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\helpers\HtmlPurifier;
+use yii\helpers\Markdown;
 
 /**
  * Answer Model
@@ -19,6 +22,7 @@ use yii\db\ActiveQuery;
  * @property string $content
  * @property integer $votes
  * @property integer $status
+ * @property integer $is_correct
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -29,6 +33,12 @@ class Answer extends ActiveRecord
 {
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
+
+    /**
+     * Markdown processed content
+     * @var string
+     */
+    public $body;
 
     /**
      * @inheritdoc
@@ -86,11 +96,20 @@ class Answer extends ActiveRecord
         return [
             TimestampBehavior::className(),
             [
+                'class' => AttributeBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_AFTER_FIND => 'body'
+                ],
+                'value' => function ($event) {
+                    return HtmlPurifier::process(Markdown::process($event->sender->content, 'gfm-comment'));
+                }
+            ],
+            [
                 'class' => BlameableBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',
                 ],
-            ]
+            ],
         ];
     }
 
@@ -118,59 +137,7 @@ class Answer extends ActiveRecord
     }
 
     /**
-     * User Relation
-     * @return \yii\db\ActiveQueryInterface
-     */
-    public function getUser()
-    {
-        return $this->hasOne(Yii::$app->user->identityClass, ['id' => 'user_id']);
-    }
-
-    /**
-     * Formatted date
-     * @return string
-     */
-    public function getUpdated()
-    {
-        return Yii::$app->formatter->asTime($this->updated_at);
-    }
-
-    /**
-     * Formatted date
-     * @return string
-     */
-    public function getCreated()
-    {
-        return Yii::$app->formatter->asTime($this->created_at);
-    }
-
-    /**
-     * Formatted user
-     * @return int
-     */
-    public function getUserName()
-    {
-        return $this->getUser() ? Module::getInstance()->getUserName($this->user) : $this->user_id;
-    }
-
-    /**
-     * @return Question
-     */
-    public function getQuestion()
-    {
-        return $this->hasOne(Question::className(), ['id' => 'question_id']);
-    }
-
-    /**
-     * Check if current user can edit this model
-     */
-    public function isAuthor()
-    {
-        return $this->user_id == Yii::$app->user->id;
-    }
-
-    /**
-     * This is invoked after the record is saved.
+     * @inheritdoc
      */
     public function afterSave($insert, $changedAttributes)
     {
@@ -189,5 +156,78 @@ class Answer extends ActiveRecord
         parent::afterDelete();
         Question::decrementAnswers($this->question_id);
         Vote::removeRelation($this);
+    }
+
+    /**
+     * Check if current user can edit this model
+     * @return bool
+     */
+    public function isAuthor()
+    {
+        return $this->user_id == Yii::$app->user->id;
+    }
+
+    /**
+     * Check if this answer is correct
+     * @return bool
+     */
+    public function isCorrect()
+    {
+        return $this->is_correct;
+    }
+
+    /**
+     * Toggles correct or not
+     * @return bool
+     */
+    public function toggleCorrect()
+    {
+        $this->is_correct = ! $this->isCorrect();
+
+        return $this->save();
+    }
+
+    /**
+     * User Relation
+     * @return \yii\db\ActiveQueryInterface
+     */
+    public function getUser()
+    {
+        return $this->hasOne(Yii::$app->user->identityClass, ['id' => 'user_id']);
+    }
+
+    /**
+     * Formatted date
+     * @return string
+     */
+    public function getUpdated()
+    {
+        return Module::getInstance()->getDate($this, 'updated_at');
+    }
+
+    /**
+     * Formatted date
+     * @return string
+     */
+    public function getCreated()
+    {
+        return Module::getInstance()->getDate($this, 'created_at');
+    }
+
+    /**
+     * Formatted user
+     * @return int
+     */
+    public function getUserName()
+    {
+        return $this->user ? Module::getInstance()->getUserName($this->user, 'id') : $this->user_id;
+    }
+
+    /**
+     * @return Question
+     */
+    public function getQuestion()
+    {
+        return $this->hasOne(Question::className(), ['id' => 'question_id']);
     }
 }

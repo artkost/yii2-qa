@@ -14,7 +14,7 @@ use yii\helpers\Html;
                     <div class="qa-panel-count"><?= $model->votes ?></div>
                     <div><?= Module::t('main', 'votes')?></div>
                 </div>
-                <div class="qa-panel status-unanswered">
+                <div class="qa-panel <?= ($model->answers > 0) ? 'status-answered' : 'status-unanswered' ?>">
                     <div class="qa-panel-count"><?= $model->answers ?></div>
                     <div><?= Module::t('main', 'answers')?></div>
                 </div>
@@ -24,14 +24,14 @@ use yii\helpers\Html;
                 </div>
             </div>
             <div class="qa-summary">
+                <div class="question-meta">
+                    <?= $this->render('created', ['model' => $model]) ?>
+                    <?= $this->render('edit-links', ['model' => $model]) ?>
+                </div>
                 <h4 class="question-heading list-group-item-heading">
                     <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias]) ?>"
                        class="question-link" title="<?= Html::encode($model->title) ?>"><?= Html::encode($model->title) ?></a>
                 </h4>
-                <div class="question-meta">
-                    <?= $this->render('edit-links', ['model' => $model]) ?>
-                    <?= $this->render('created', ['model' => $model]) ?>
-                </div>
                 <div class="question-tags">
                     <?= $this->render('tags-list', ['model' => $model]) ?>
                 </div>

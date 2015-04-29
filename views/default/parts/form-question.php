@@ -8,6 +8,9 @@ $form = ActiveForm::begin([
     'id' => 'question-form',
     'fieldConfig' => ['class' => ActiveField::className()]
 ]);
+
+$autocompleteRoute = ['/qa/default/tag-suggest'];
+
 ?>
 
 <?= $form->errorSummary($model); ?>
@@ -17,11 +20,11 @@ $form = ActiveForm::begin([
     ->hint(Module::t('main', "What's your question? Be specific.")); ?>
 
 <?= $form->field($model, 'content')
-    ->textarea()
-    ->hint(Module::t('main', 'HTML filtered content')); ?>
+    ->textarea(['rows' => 5])
+    ->hint(Module::t('main', 'Markdown powered content')); ?>
 
 <?= $form->field($model, 'tags')
-    ->autoComplete(['/qa/default/tag-suggest'])
+    ->autoComplete($autocompleteRoute)
     ->textInput()
     ->hint(Module::t('main', 'Comma separated list of tags')) ?>
 

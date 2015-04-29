@@ -5,6 +5,7 @@
 
         voteSelector: 'a.js-vote-up, a.js-vote-down',
         favoriteSelector: 'a.js-favorite',
+        answerCorrectSelector: 'a.js-answer-correct-link',
 
         /**
          *
@@ -48,6 +49,7 @@
     $(function() {
         $('.js-vote').on('click', Questions.voteSelector, Questions.handleResponse);
         $('.js-favorite').on('click', Questions.favoriteSelector, Questions.handleResponse);
+        $('.js-answer-correct').on('click', Questions.answerCorrectSelector, Questions.handleResponse);
     });
 
     window.yii.qa = Questions;

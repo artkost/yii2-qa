@@ -64,6 +64,7 @@ class DefaultController extends Controller
                             'answer-vote',
                             'question-vote',
                             'question-favorite',
+                            'answer-correct',
                         ],
                         'roles' => ['@']
                     ],
@@ -193,6 +194,8 @@ class DefaultController extends Controller
             if ($model->load($_POST)) {
                 if ($model->haveDraft($_POST)) {
                     $model->status = Question::STATUS_DRAFT;
+                } else {
+                    $model->status = Question::STATUS_PUBLISHED;
                 }
 
                 if (!$model->save()) {
@@ -277,6 +280,30 @@ class DefaultController extends Controller
         }
 
         return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionAnswerCorrect($id, $questionId)
+    {
+        /** @var Answer $answer */
+        $answer = $this->findModel(Answer::className(), $id);
+        /** @var Question $question */
+        $question = $this->findModel(Question::className(), $questionId);
+
+        $response = [
+            'data' => ['status' => false],
+            'format' => 'json'
+        ];
+
+        if ($question->isAuthor() && $answer->question_id == $questionId) {
+            $response['data']['status'] = $answer->toggleCorrect();
+            $response['data']['html'] = $this->renderPartial('parts/answer-correct', compact('answer', 'question'));
+        }
+
+        if (Yii::$app->request->isAjax) {
+            return new Response($response);
+        }
+
+        return $this->redirect(['view', 'id' => $questionId]);
     }
 
     /**

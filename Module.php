@@ -54,10 +54,16 @@ class Module extends \yii\base\Module
     const TRANSLATION = 'artkost/qa/';
 
     /**
-     * Formatter function name in user model, or callable
+     * Formatter function for name in user model, or callable
      * @var string|callable
      */
     public $userNameFormatter = 'getId';
+
+    /**
+     * Formatter function for date in answer and question models, or callable
+     * @var string|callable
+     */
+    public $dateFormatter;
 
     /**
      * Alias function for [[Yii::t()]]
@@ -85,16 +91,45 @@ class Module extends \yii\base\Module
 
     /**
      * @param \app\models\User $model
+     * @param string $attribute
      * @return string
      * @throws InvalidCallException
      */
-    public function getUserName($model)
+    public function getUserName($model, $attribute)
     {
-        if (is_callable($this->userNameFormatter)) {
-            return call_user_func($this->userNameFormatter, $model);
-        } else if (method_exists($model, $this->userNameFormatter)) {
-            return call_user_func([$model, $this->userNameFormatter]);
-        } else throw new InvalidCallException('Invalid userNameFormatter function');
+        return $this->callConfigFunction($model, 'userNameFormatter', $attribute, function($modelInstance) {
+            return $modelInstance->id;
+        });
     }
 
+    /**
+     * @param $model
+     * @param string $attribute
+     * @return string
+     */
+    public function getDate($model, $attribute)
+    {
+        return $this->callConfigFunction($model, 'dateFormatter', $attribute, function($modelInstance) use($attribute) {
+            return Yii::$app->formatter->asRelativeTime($modelInstance->{$attribute});
+        });
+    }
+
+    /**
+     * @param \app\models\User $model
+     * @param string $functionName
+     * @param string $attribute
+     * @param \Closure $defaultFunction
+     * @return string
+     * @throws InvalidCallException
+     */
+    protected function callConfigFunction($model, $functionName, $attribute, $defaultFunction = null)
+    {
+        if (is_callable($this->{$functionName})) {
+            return call_user_func($this->{$functionName}, $model, $attribute);
+        } else if (method_exists($model, $this->{$functionName})) {
+            return call_user_func([$model, $this->{$functionName}], $model, $attribute);
+        } else if ($defaultFunction instanceof \Closure) {
+            return $defaultFunction($model, $attribute);
+        } else throw new InvalidCallException("Invalid {$functionName} function");
+    }
 }

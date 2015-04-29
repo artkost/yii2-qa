@@ -21,43 +21,42 @@ $answerOrders = [
 ];
 
 ?>
-<div class="qa-view row">
-    <div class="col-md-12">
-        <div class="qa-view-question">
+<section class="qa-view">
+    <article class="qa-view-question row">
+        <header class="page-header col-md-12">
+            <h1 class="qa-view-title">
+                <?= Html::encode($this->title) ?>
+                <?php if ($model->isDraft()): ?>
+                    <small><span class="label label-default"><?= Module::t('main', 'Draft') ?></span></small>
+                <?php endif; ?>
+            </h1>
+        </header>
+        <section class="qa-view-aside col-md-2" role="aside">
+            <?= $this->render('parts/created', ['model' => $model]) ?>
             <div class="qa-view-actions">
                 <?= $this->render('parts/vote', ['model' => $model, 'route' => 'question-vote']) ?>
                 <?= $this->render('parts/favorite', ['model' => $model]) ?>
             </div>
-            <div class="qa-view-body">
-                <div class="page-header">
-                    <h1 class="qa-view-title">
-                        <?= Html::encode($this->title) ?>
-                        <?php if ($model->isDraft()): ?>
-                            <small><span class="label label-default"><?= Module::t('main', 'Draft') ?></span></small>
-                        <?php endif; ?>
-                    </h1>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-body qa-view-text">
-                        <?= Html::encode($model->content) ?>
+        </section>
+        <section class="qa-view-body col-md-10" role="main">
+            <div class="panel panel-default">
+                <section class="panel-body qa-view-text">
+                    <?= $model->body ?>
+                </section>
+                <footer class="panel-footer">
+                    <div class="qa-view-meta">
+                        <?= $this->render('parts/edit-links', ['model' => $model]) ?>
+                        <?= $this->render('parts/tags-list', ['model' => $model]) ?>
                     </div>
-                    <div class="panel-footer">
-                        <div class="qa-view-meta">
-                            <?= $this->render('parts/tags-list', ['model' => $model]) ?>
-                            <?= $this->render('parts/edit-links', ['model' => $model]) ?>
-                            <?= $this->render('parts/created', ['model' => $model]) ?>
-                        </div>
-                    </div>
-                </div>
+                </footer>
             </div>
-        </div>
+        </section>
+    </article>
 
-        <div class="qa-view-answers-heading clearfix">
-            <h3 class="qa-view-title"><?= Module::t('main', '{n, plural, =0{No answers yet} =1{One answer} other{# answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
-
+    <div class="qa-view-answers row">
+        <div class="qa-view-answers-heading col-md-12">
             <?php if ($answerDataProvider->totalCount): ?>
-                <ul class="qa-view-tabs nav nav-tabs">
+                <ul class="qa-view-tabs nav nav-pills">
                     <?php foreach ($answerOrders as $aId => $aOrder): ?>
                         <li <?= ($aOrder == $answerOrder) ? 'class="active"' : '' ?> >
                             <a href="<?= Module::url(['view', 'id' => $model->id, 'alias' => $model->alias, 'answers' => $aOrder]) ?>">
@@ -67,30 +66,33 @@ $answerOrders = [
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
+            <h3 class="qa-view-title"><?= Module::t('main', '{n, plural, =0{No answers yet} =1{One answer} other{# answers}}', ['n' => $answerDataProvider->totalCount]); ?></h3>
         </div>
 
-        <div class="qa-view-answers">
-            <?php foreach ($answerDataProvider->models as $row): ?>
-                <div class="qa-view-answer panel panel-default">
-                    <div class="panel-body">
+        <div class="qa-view-answers-list col-md-12">
+        <?php foreach ($answerDataProvider->models as $row): ?>
+            <article class="qa-view-answer row">
+                <section class="qa-view-answer-aside col-md-2">
+                    <?= $this->render('parts/created', ['model' => $row]) ?>
+                    <div class="qa-answer-like">
+                        <?= $this->render('parts/answer-correct', ['answer' => $row, 'question' => $model]) ?>
+                        <?= $this->render('parts/like', ['model' => $row, 'route' => 'answer-vote']) ?>
+                    </div>
+                    <?= $this->render('parts/edit-links', ['model' => $row]) ?>
+                </section>
+                <section class="panel panel-default col-md-10">
+                    <section class="panel-body">
                         <div class="qa-view-text">
-                            <?= Html::encode($row->content) ?>
+                            <?= $row->body ?>
                         </div>
-                    </div>
-                    <div class="panel-footer">
-                        <div class="qa-view-meta">
-                            <?= $this->render('parts/edit-links', ['model' => $row]) ?>
-                            <?= $this->render('parts/created', ['model' => $row]) ?>
-                        </div>
-                        <div class="qa-answer-like">
-                            <?= $this->render('parts/like', ['model' => $row, 'route' => 'answer-vote']) ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+                    </section>
+                </section>
+            </article>
+
+        <?php endforeach; ?>
         </div>
 
-        <div class="qa-view-pager">
+        <div class="qa-view-answer-pager">
             <?= $this->render('parts/pager', ['dataProvider' => $answerDataProvider]) ?>
         </div>
 
@@ -98,4 +100,4 @@ $answerOrders = [
             <?= $this->render('parts/form-answer', ['model' => $answer, 'action' => Module::url(['answer', 'id' => $model->id])]); ?>
         </div>
     </div>
-</div>
+</section>

@@ -23,7 +23,7 @@
     min-width: 64px;
     height: 54px;
     text-align: center;
-    padding: 4px;
+    padding: 4px 8px;
     line-height: 1.42857143;
     background-color: #fff;
     border: 1px solid #ddd;
@@ -65,7 +65,6 @@
 .qa-vote {
     color: #555;
     line-height: 24px;
-    text-align: center;
     margin-bottom: 10px;
 }
 
@@ -79,19 +78,20 @@
     font-size: 16px;
 }
 
+.qa-vote-up-disabled,
+.qa-vote-down-disabled {
+    opacity: 0.5;
+}
+
 .qa-vote-count {
     display: block;
     color: #555;
     font-size: 24px;
-    padding: 16px;
-}
-
-.qa-favorite {
-    text-align: center;
+    padding: 4px 2px;
 }
 
 .qa-favorite-link {
-    font-size: 32px;
+    font-size: 24px;
 }
 
 .qa-favorite-active .qa-favorite-link:hover,
@@ -104,10 +104,14 @@
     color: #f0ad4e;
 }
 
-.qa-created {
-    padding: 0 10px;
+.qa-answer-correct-button {
+    cursor: default;
 }
 
 .qa-time {
     color: #999;
+}
+
+.qa-edit-links > a {
+    display: inline-block;
 }

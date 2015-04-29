@@ -80,7 +80,7 @@ $answerOrders = [
                     </div>
                     <?= $this->render('parts/edit-links', ['model' => $row]) ?>
                 </section>
-                <section class="panel panel-default col-md-10">
+                <section class="panel <?= ($row->isCorrect()) ? 'panel-warning': 'panel-default' ?> col-md-10">
                     <section class="panel-body">
                         <div class="qa-view-text">
                             <?= $row->body ?>

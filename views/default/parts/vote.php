@@ -25,7 +25,7 @@ $userId = Yii::$app->user->id;
         <a class="qa-vote-down js-vote-down"
            href="<?= Module::url([$route, 'id' => $model->id, 'vote' => 'down']) ?>"
            title="<?= Module::t('main', 'Vote down') ?>">
-            <span class="btn btn-default"><span class="glyphicon glyphicon-chevron-down"></span></span>
+            <span class="glyphicon glyphicon-chevron-down"></span>
         </a>
     <?php else: ?>
         <span class="qa-vote-down qa-vote-down-disabled js-vote-down"

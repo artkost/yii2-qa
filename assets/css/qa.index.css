@@ -1,6 +1,7 @@
 
 .qa-list .question-meta {
     float: right;
+    text-align: right;
 }
 
 .qa-list .qa-summary {

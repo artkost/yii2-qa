@@ -18,6 +18,8 @@
  */
 return [
     'Active' => '',
+    'Oldest' => '',
+    'Votes' => '',
     'Add to favorite' => '',
     'Answer' => '',
     'Answer is correct' => '',

@@ -4,7 +4,7 @@
  */
 ?>
 
-<span class="qa-created">
-    <span class="qa-time"><?= $model->updated ?></span>
-    <span class="qa-user"><?= $model->userName ?></span>
-</span>
+<div class="qa-created">
+    <div class="qa-user"><?= $model->userName ?></div>
+    <div class="qa-time"><?= $model->updated ?></div>
+</div>

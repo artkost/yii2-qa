@@ -11,6 +11,7 @@ $deleteRoute = ['delete', 'id' => $model->id];
 ?>
 
 <?php if ($model->isAuthor()) : ?>
+    <span class="qa-edit-links">
     <a href="<?= Module::url($editRoute) ?>" title="<?= Module::t('main', 'Edit'); ?>"
        class="label label-success"><span
             class="glyphicon glyphicon-pencil"></span></a>
@@ -21,4 +22,5 @@ $deleteRoute = ['delete', 'id' => $model->id];
            data-confirm="<?= Module::t('main', 'Sure?'); ?>" data-method="post" data-pjax="0"><span
                 class="glyphicon glyphicon-remove"></span></a>
     <?php endif; ?>
+    </span>
 <?php endif; ?>

@@ -17,7 +17,19 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    '' => '',
+    'Answer' => '',
+    'Answer is correct' => '',
+    'Answer to {title}' => '',
+    'Delete' => '',
+    'Edit' => '',
+    'Error create question' => '',
+    'Error save question' => '',
+    'Like' => '',
+    'Mark answer as correct' => '',
+    'No favorite questions' => '',
+    'No popular questions' => '',
+    'Update' => '',
+    'What\'s your question? Be specific.' => '',
     'Active' => 'Activo',
     'Add to favorite' => 'Agregar a favoritos',
     'Ask a Question' => 'Hacer una pregunta',

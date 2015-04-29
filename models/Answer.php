@@ -22,6 +22,7 @@ use yii\helpers\Markdown;
  * @property string $content
  * @property integer $votes
  * @property integer $status
+ * @property integer $is_correct
  * @property integer $created_at
  * @property integer $updated_at
  *
@@ -159,10 +160,31 @@ class Answer extends ActiveRecord
 
     /**
      * Check if current user can edit this model
+     * @return bool
      */
     public function isAuthor()
     {
         return $this->user_id == Yii::$app->user->id;
+    }
+
+    /**
+     * Check if this answer is correct
+     * @return bool
+     */
+    public function isCorrect()
+    {
+        return $this->is_correct;
+    }
+
+    /**
+     * Toggles correct or not
+     * @return bool
+     */
+    public function toggleCorrect()
+    {
+        $this->is_correct = ! $this->isCorrect();
+
+        return $this->save();
     }
 
     /**

@@ -1,3 +1,7 @@
+.qa-view-aside .qa-created {
+    float: right;
+}
+
 .qa-view-text {
     min-height: 100px;
     overflow: hidden;
@@ -8,21 +12,14 @@
     width: auto;
 }
 
-.qa-view-meta {
-    text-align: right;
+.qa-view-meta .qa-edit-links {
+    float: right;
 }
 
-.qa-view-meta .qa-tags {
-    float: left;
-}
-
-.qa-view-actions {
-    float: left;
-    width: 60px;
-}
-
-.qa-view-body {
-    margin-left: 70px;
+.qa-view-meta:after {
+    content: '';
+    display: table;
+    clear: both;
 }
 
 .qa-view-question {
@@ -34,9 +31,8 @@
     margin-top: 10px;
 }
 
-.qa-view-answer .qa-view-meta {
-    float: right;
-    line-height: 30px;
+.qa-view-answer-aside .qa-created {
+    margin-bottom: 10px;
 }
 
 .qa-view-heading {

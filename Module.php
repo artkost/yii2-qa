@@ -110,7 +110,7 @@ class Module extends \yii\base\Module
     public function getDate($model, $attribute)
     {
         return $this->callConfigFunction($model, 'dateFormatter', $attribute, function($modelInstance) use($attribute) {
-            return Yii::$app->formatter->asTime($modelInstance->{$attribute});
+            return Yii::$app->formatter->asRelativeTime($modelInstance->{$attribute});
         });
     }
 

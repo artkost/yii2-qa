@@ -17,16 +17,15 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Answer' => 'Ответ',
-    'Delete' => 'Удалить',
-    'Markdown powered content' => 'Поддерживается Markdown разметка',
+    'Answer is correct' => 'Этот ответ правильный',
+    'Mark answer as correct' => 'Пометить ответ как правильный',
     'Active' => 'Активные',
-    'Oldest' => 'Старые',
-    'Votes' => 'Голоса',
     'Add to favorite' => 'Добавить в избранное',
+    'Answer' => 'Ответ',
     'Answer to {title}' => 'Ответ на {title}',
     'Ask a Question' => 'Задать вопрос',
     'Comma separated list of tags' => 'Список тегов через запятую',
+    'Delete' => 'Удалить',
     'Draft' => 'Черновик',
     'Edit' => 'Редактировать',
     'Edit {title}' => 'Редактирование {title}',
@@ -35,6 +34,7 @@ return [
     'Favorite' => 'Избранное',
     'Favorite Questions' => 'Избранные Вопросы',
     'Like' => 'Нравится',
+    'Markdown powered content' => 'Поддерживается Markdown разметка',
     'My' => 'Мое',
     'No favorite questions' => 'Нет избранных вопросов',
     'No popular questions' => 'Нет популярных вопросов',

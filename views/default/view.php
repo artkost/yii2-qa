@@ -10,7 +10,7 @@
 use artkost\qa\Module;
 use yii\helpers\Html;
 
-$this->title = $model->title;
+$this->title = Html::encode($model->title);
 $this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Questions'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
@@ -26,6 +26,7 @@ $answerOrders = [
         <header class="page-header col-md-12">
             <h1 class="qa-view-title">
                 <?= Html::encode($this->title) ?>
+
                 <?php if ($model->isDraft()): ?>
                     <small><span class="label label-default"><?= Module::t('main', 'Draft') ?></span></small>
                 <?php endif; ?>

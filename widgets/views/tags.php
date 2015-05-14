@@ -3,6 +3,7 @@
  * @var artkost\qa\models\Tag[] $models
  */
 use artkost\qa\Module;
+use yii\helpers\Html;
 
 ?>
 
@@ -13,8 +14,8 @@ use artkost\qa\Module;
             <?php foreach ($models as $tag): ?>
                 <a href="<?= Module::url(['/qa/default/tags', 'tags' => $tag['name']]) ?>"
                    class="label label-primary"
-                   title="<?= $tag['name'] ?>"
-                   rel="tag"><?= $tag['name'] ?></a>
+                   title="<?= Html::encode($tag['name']) ?>"
+                   rel="tag"><?= Html::encode($tag['name']) ?></a>
             <?php endforeach; ?>
         </span>
     </div>

@@ -4,6 +4,7 @@ namespace artkost\qa\models;
 
 use artkost\qa\ActiveRecord;
 use artkost\qa\Module;
+use yii\helpers\Html;
 
 /**
  * Tag Model
@@ -109,7 +110,7 @@ class Tag extends ActiveRecord
         $names = array();
 
         foreach ($tags as $tag) {
-            $names[] = ['word' => $tag->name];
+            $names[] = ['word' => Html::encode($tag->name)];
         }
 
         return $names;

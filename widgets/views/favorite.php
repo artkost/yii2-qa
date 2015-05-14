@@ -3,6 +3,7 @@
  * @var artkost\qa\models\Favorite[] $models
  */
 use artkost\qa\Module;
+use yii\helpers\Html;
 
 ?>
 
@@ -13,7 +14,7 @@ use artkost\qa\Module;
             <?php foreach ($models as $model): ?>
                 <li class="list-group-item">
                     <a href="<?= Module::url(['/qa/default/view', 'id' => $model->question->id, 'alias' => $model->question->alias]) ?>">
-                        <?= $model->question->title ?>
+                        <?= Html::encode($model->question->title) ?> ?>
                     </a>
                 </li>
             <?php endforeach; ?>

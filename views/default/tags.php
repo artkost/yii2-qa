@@ -11,6 +11,7 @@ use yii\helpers\Html;
 $this->title = Module::t('main', 'Questions by tags');
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = Html::encode(implode(', ', $tags));
+
 ?>
 <div class="qa-tags">
     <div class="row">

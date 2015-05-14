@@ -99,6 +99,15 @@ class Question extends ActiveRecord
                 }
             ],
             [
+                'class' => AttributeBehavior::className(),
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_VALIDATE => 'tags'
+                ],
+                'value' => function ($event) {
+                    return strip_tags($event->sender->tags);
+                }
+            ],
+            [
                 'class' => BlameableBehavior::className(),
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => 'user_id',

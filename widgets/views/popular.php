@@ -3,6 +3,7 @@
  * @var artkost\qa\models\Question[] $models
  */
 use artkost\qa\Module;
+use yii\helpers\Html;
 
 ?>
 
@@ -12,8 +13,9 @@ use artkost\qa\Module;
         <?php if (!empty($models)): ?>
             <?php foreach ($models as $model): ?>
                 <li class="list-group-item">
-                    <a href="<?= Module::url(['/qa/default/view', 'id' => $model->id, 'alias' => $model->alias]) ?>">
-                        <?= $model->title ?>
+                    <a href="<?= Module::url(['/qa/default/view', 'id' => $model->id, 'alias' => $model->alias]) ?>"
+                       title="<?= Html::encode($model->title) ?>">
+                        <?= Html::encode($model->title) ?>
                     </a>
                 </li>
             <?php endforeach; ?>

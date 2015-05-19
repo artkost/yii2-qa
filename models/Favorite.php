@@ -82,7 +82,14 @@ class Favorite extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_INSERT => 'created_ip'
                 ],
                 'value' => function ($event) {
-                    return ip2long(Yii::$app->request->getUserIP());
+                    $ip = ip2long(Yii::$app->request->getUserIP());
+                    if (PHP_INT_SIZE == 8) {
+                        if ($ip > 0x7FFFFFFF) {
+                            $ip -= 0x100000000;
+                        }
+                    }
+
+                    return $ip;
                 }
             ],
             [

@@ -14,7 +14,7 @@ use yii\helpers\Html;
             <?php foreach ($models as $model): ?>
                 <li class="list-group-item">
                     <a href="<?= Module::url(['/qa/default/view', 'id' => $model->question->id, 'alias' => $model->question->alias]) ?>">
-                        <?= Html::encode($model->question->title) ?> ?>
+                        <?= Html::encode($model->question->title) ?>
                     </a>
                 </li>
             <?php endforeach; ?>

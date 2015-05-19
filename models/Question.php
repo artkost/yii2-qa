@@ -52,6 +52,14 @@ class Question extends ActiveRecord
     /**
      * @inheritdoc
      */
+    public static function find()
+    {
+        return new QuestionQuery(get_called_class());
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function tableName()
     {
         return '{{%qa_question}}';
@@ -104,7 +112,7 @@ class Question extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_VALIDATE => 'tags'
                 ],
                 'value' => function ($event) {
-                    return strip_tags($event->sender->tags);
+                    return $event->sender->tags ? strip_tags($event->sender->tags) : $event->sender->tags;
                 }
             ],
             [

@@ -19,7 +19,10 @@ class Tags extends Widget
      */
     public function run()
     {
-        $models  = Tag::find()->orderBy('frequency')->limit($this->limit)->all();
+        $models = Tag::find()
+            ->orderBy('frequency')
+            ->limit($this->limit)
+            ->all();
 
         return $this->render('tags', [
             'models'  => $models,

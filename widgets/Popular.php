@@ -20,7 +20,8 @@ class Popular extends Widget
     public function run()
     {
         $models = Question::find()
-            ->where('views > :views', [':views' => $this->views])
+            ->published()
+            ->views($this->views)
             ->limit($this->limit)
             ->all();
 

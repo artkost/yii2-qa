@@ -17,10 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Created At' => '',
-    'Created Ip' => '',
-    'Question ID' => '',
-    'User ID' => '',
+    'Created At' => 'Creado en',
+    'Created Ip' => 'IP de creación',
+    'Question ID' => 'ID de Pregunta',
+    'User ID' => 'ID de Usuario',
     'Alias' => 'Alias',
     'Content' => 'Contenido',
     'Frequency' => 'Frecuencia',

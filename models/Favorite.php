@@ -83,10 +83,8 @@ class Favorite extends ActiveRecord
                 ],
                 'value' => function ($event) {
                     $ip = ip2long(Yii::$app->request->getUserIP());
-                    if (PHP_INT_SIZE == 8) {
-                        if ($ip > 0x7FFFFFFF) {
-                            $ip -= 0x100000000;
-                        }
+                    if ($ip > 0x7FFFFFFF) {
+                        $ip -= 0x100000000;
                     }
 
                     return $ip;

@@ -1,7 +1,8 @@
 <?php
 
-use yii\db\Schema;
 use artkost\qa\models\Answer;
+use artkost\qa\models\AnswerInterface;
+use yii\db\Schema;
 
 class m140314_120441_create_qa_answer_table extends \yii\db\Migration
 {
@@ -13,7 +14,7 @@ class m140314_120441_create_qa_answer_table extends \yii\db\Migration
             'question_id' => Schema::TYPE_INTEGER . ' NOT NULL',
             'content' => Schema::TYPE_TEXT . ' NOT NULL',
             'votes' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 0',
-            'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT ' . Answer::STATUS_PUBLISHED,
+            'status' => Schema::TYPE_SMALLINT . ' NOT NULL DEFAULT ' . AnswerInterface::STATUS_PUBLISHED,
             'created_at' => Schema::TYPE_INTEGER . ' NOT NULL',
             'updated_at' => Schema::TYPE_INTEGER . ' NOT NULL',
         ]);

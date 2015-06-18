@@ -68,9 +68,9 @@ class Vote extends ActiveRecord
      */
     protected static function modelEntityType($model)
     {
-        if ($model instanceof Question) {
+        if ($model instanceof QuestionInterface) {
             return self::ENTITY_QUESTION;
-        } elseif ($model instanceof Answer) {
+        } elseif ($model instanceof AnswerInterface) {
             return self::ENTITY_ANSWER;
         } else {
             $className = get_class($model);

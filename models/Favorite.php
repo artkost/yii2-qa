@@ -65,6 +65,20 @@ class Favorite extends ActiveRecord
     }
 
     /**
+     * @param int $question_id
+     * @return int
+     */
+    public static function removeRelation($question_id)
+    {
+        return self::deleteAll(
+            'question_id=:question_id',
+            [
+                ':question_id' => $question_id,
+            ]
+        );
+    }
+
+    /**
      * @inheritdoc
      */
     public function behaviors()

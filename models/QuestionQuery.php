@@ -20,7 +20,7 @@ class QuestionQuery extends ActiveQuery
      */
     public function published()
     {
-        return $this->andWhere(['status' => Question::STATUS_PUBLISHED]);
+        return $this->andWhere(['status' => QuestionInterface::STATUS_PUBLISHED]);
     }
 
     /**
@@ -28,6 +28,6 @@ class QuestionQuery extends ActiveQuery
      */
     public function draft()
     {
-        return $this->andWhere(['status' => Question::STATUS_DRAFT]);
+        return $this->andWhere(['status' => QuestionInterface::STATUS_DRAFT]);
     }
 }

@@ -71,7 +71,7 @@ $answerOrders = [
         </div>
 
         <div class="qa-view-answers-list col-md-12">
-        <?php foreach ($answerDataProvider->models as $row): ?>
+        <?php foreach ($answerDataProvider->models as $row /** @var \artkost\qa\models\Answer $row */): ?>
             <article class="qa-view-answer row">
                 <section class="qa-view-answer-aside col-md-2">
                     <?= $this->render('parts/created', ['model' => $row]) ?>

@@ -26,14 +26,13 @@ use yii\helpers\Markdown;
  * @property integer $created_at
  * @property integer $updated_at
  *
+ * @property Question $question
+ *
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Answer extends ActiveRecord
+class Answer extends ActiveRecord implements AnswerInterface
 {
-    const STATUS_DRAFT = 0;
-    const STATUS_PUBLISHED = 1;
-
     /**
      * Markdown processed content
      * @var string
@@ -49,15 +48,15 @@ class Answer extends ActiveRecord
     }
 
     /**
-     * @param int $question_id
+     * @param int $questionID
      * @return int
      */
-    public static function removeRelation($question_id)
+    public static function removeRelation($questionID)
     {
         return self::deleteAll(
             'question_id=:question_id',
             [
-                ':question_id' => $question_id,
+                ':question_id' => $questionID,
             ]
         );
     }

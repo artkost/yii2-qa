@@ -32,11 +32,8 @@ use yii\helpers\Markdown;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Question extends ActiveRecord
+class Question extends ActiveRecord implements QuestionInterface
 {
-    const STATUS_DRAFT = 0;
-    const STATUS_PUBLISHED = 1;
-
     /**
      * Old tags populated after find record
      * @var string
@@ -178,6 +175,7 @@ class Question extends ActiveRecord
         Tag::updateFrequency($this->tags, '');
         Vote::removeRelation($this);
         Answer::removeRelation($this->id);
+        Favorite::removeRelation($this->id);
     }
 
     /**
@@ -222,7 +220,7 @@ class Question extends ActiveRecord
      */
     public function isDraft()
     {
-        return $this->status == self::STATUS_DRAFT;
+        return $this->status == QuestionInterface::STATUS_DRAFT;
     }
 
     /**
@@ -313,5 +311,13 @@ class Question extends ActiveRecord
     public function getFavorites()
     {
         return $this->hasMany(Favorite::className(), ['question_id' => 'id']);
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getFavoriteCount()
+    {
+        return $this->hasMany(Favorite::className(), ['question_id' => 'id'])->count();
     }
 }

@@ -2,6 +2,9 @@
 
 namespace artkost\qa;
 
+use artkost\qa\models\Answer;
+use artkost\qa\models\Question;
+use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\InvalidConfigException;
 use yii\console\Application as ConsoleApplication;
@@ -34,5 +37,8 @@ class Bootstrap implements BootstrapInterface
                 Module::TRANSLATION . 'model' => 'model.php'
             ]
         ];
+
+        Yii::$container->set('artkost\qa\models\AnswerInterface', Answer::className());
+        Yii::$container->set('artkost\qa\models\QuestionInterface', Question::className());
     }
 }

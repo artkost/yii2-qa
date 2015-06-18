@@ -31,7 +31,7 @@ class QuestionSearch extends Question
     {
         $query = self::find()->with('user');
 
-        $query->andWhere(['status' => self::STATUS_PUBLISHED]);
+        $query->andWhere(['status' => QuestionInterface::STATUS_PUBLISHED]);
 
         if (isset($params['tags']) && $params['tags']) {
             $query->andWhere(['like', 'tags', $params['tags']]);
@@ -72,7 +72,7 @@ class QuestionSearch extends Question
     {
         $dataProvider = $this->search($params);
         $dataProvider->query
-            ->andWhere(['status' => self::STATUS_DRAFT])
+            ->andWhere(['status' => QuestionInterface::STATUS_DRAFT])
             ->where(['user_id' => $userID]);
 
         return $dataProvider;

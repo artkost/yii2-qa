@@ -5,7 +5,9 @@ namespace artkost\qa\controllers;
 use artkost\qa\ActiveRecord;
 use artkost\qa\Asset;
 use artkost\qa\models\Answer;
+use artkost\qa\models\AnswerInterface;
 use artkost\qa\models\Question;
+use artkost\qa\models\QuestionInterface;
 use artkost\qa\models\QuestionSearch;
 use artkost\qa\models\Tag;
 use artkost\qa\models\Vote;
@@ -152,24 +154,25 @@ class DefaultController extends Controller
     public function actionView($id)
     {
         /** @var Question $model */
-        $model = Question::find()->with('user')->where(['id' => $id])->one();
+        $modelClass = get_class($this->getQuestionModel());
+        $model = $modelClass::find()->with('user')->where(['id' => $id])->one();
 
         if ($model) {
-            if ($model->isDraft()) {
-                if (! $model->isAuthor()) {
-                    $this->notFoundException();
-                }
+            if ($model->isDraft() && !$model->isAuthor()) {
+                $this->notFoundException();
             }
 
             if ($model->isUserUnique()) {
                 $model->updateCounters(['views' => 1]);
             }
 
-            $answer = new Answer;
+            $answerClass = get_class($this->getAnswerModel());
+            /** @var Answer $model */
+            $answer = $this->getAnswerModel();
 
-            $query = Answer::find()->with('user');
+            $query = $answerClass::find()->with('user');
 
-            $answerOrder = Answer::applyOrder($query, Yii::$app->request->get('answers', 'votes'));
+            $answerOrder = $answerClass::applyOrder($query, Yii::$app->request->get('answers', 'votes'));
 
             $answerDataProvider = new ActiveDataProvider([
                 'query' => $query->where(['question_id' => $model->id]),
@@ -179,9 +182,9 @@ class DefaultController extends Controller
             ]);
 
             return $this->render('view', compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
-        } else {
-            $this->notFoundException();
         }
+
+        return $this->notFoundException();
     }
 
     /**
@@ -199,9 +202,9 @@ class DefaultController extends Controller
         if ($model->isAuthor()) {
             if ($model->load($_POST)) {
                 if ($model->haveDraft($_POST)) {
-                    $model->status = Question::STATUS_DRAFT;
+                    $model->status = QuestionInterface::STATUS_DRAFT;
                 } else {
-                    $model->status = Question::STATUS_PUBLISHED;
+                    $model->status = QuestionInterface::STATUS_PUBLISHED;
                 }
 
                 if (!$model->save()) {
@@ -213,9 +216,9 @@ class DefaultController extends Controller
             }
 
             return $this->render('edit', compact('model'));
-        } else {
-            $this->forbiddenException();
         }
+
+        return $this->forbiddenException();
     }
 
     /**
@@ -233,9 +236,9 @@ class DefaultController extends Controller
         if ($model->isAuthor()) {
             $model->delete();
             return $this->redirect(['index']);
-        } else {
-            $this->forbiddenException();
         }
+
+        return $this->forbiddenException();
     }
 
     /**
@@ -248,7 +251,7 @@ class DefaultController extends Controller
 
         if ($model->load($_POST)) {
             if ($model->haveDraft($_POST)) {
-                $model->status = Question::STATUS_DRAFT;
+                $model->status = QuestionInterface::STATUS_DRAFT;
             }
 
             if (!$model->save()) {
@@ -396,12 +399,31 @@ class DefaultController extends Controller
     {
         if (($model = $modelClass::find()->where(['id' => $id])->one()) !== null) {
             return $model;
-        } else {
-            $this->notFoundException();
         }
+
+        return $this->notFoundException();
     }
 
     /**
+     * @return Question
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function getQuestionModel()
+    {
+        return Yii::$container->get('artkost\qa\models\QuestionInterface');
+    }
+
+    /**
+     * @return Answer
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function getAnswerModel()
+    {
+        return Yii::$container->get('artkost\qa\models\AnswerInterface');
+    }
+
+    /**
+     * @return null
      * @throws NotFoundHttpException
      */
     protected function notFoundException()
@@ -410,6 +432,7 @@ class DefaultController extends Controller
     }
 
     /**
+     * @return null
      * @throws ForbiddenHttpException
      */
     protected function forbiddenException()

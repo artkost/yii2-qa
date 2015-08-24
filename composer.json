@@ -3,10 +3,10 @@
     "description": "The Yii 2 Questions and Answers module inspired by Stack Overflow",
     "keywords": [
         "yii2",
+        "yii2-qa",
         "qa",
-        "question",
-        "answer",
-        "module"
+        "question answer",
+        "artkost"
     ],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",

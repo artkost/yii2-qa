@@ -197,8 +197,8 @@ class DefaultController extends Controller
         $model = $this->findModel(Question::className(), $id);
 
         if ($model->isAuthor()) {
-            if ($model->load($_POST)) {
-                if ($model->haveDraft($_POST)) {
+            if ($model->load(Yii::$app->request->post())) {
+                if ($model->haveDraft(Yii::$app->request->post())) {
                     $model->status = Question::STATUS_DRAFT;
                 } else {
                     $model->status = Question::STATUS_PUBLISHED;
@@ -246,20 +246,17 @@ class DefaultController extends Controller
     {
         $model = new Question();
 
-        if ($model->load($_POST)) {
-            if ($model->haveDraft($_POST)) {
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->haveDraft(Yii::$app->request->post())) {
                 $model->status = Question::STATUS_DRAFT;
             }
 
-            if (!$model->save()) {
-                throw new DbException(Module::t('main', 'Error create question'));
+            if ($model->save()) {
+                Yii::$app->session->setFlash('questionFormSubmitted');
+                return $this->redirect(['view', 'id' => $model->id]);
             }
-
-            Yii::$app->session->setFlash('questionFormSubmitted');
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('ask', compact('model'));
-        }
+            
+        return $this->render('ask', compact('model'));
     }
 
     /**
@@ -349,7 +346,7 @@ class DefaultController extends Controller
             $this->notFoundException();
         }
 
-        if ($model->load($_POST) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('answerFormSubmitted');
 
             return $this->redirect(['view', 'id' => $question->id, 'alias' => $question->alias]);

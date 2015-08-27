@@ -254,15 +254,12 @@ class DefaultController extends Controller
                 $model->status = QuestionInterface::STATUS_DRAFT;
             }
 
-            if (!$model->save()) {
-                throw new DbException(Module::t('main', 'Error create question'));
+            if ($model->save()) {
+                Yii::$app->session->setFlash('questionFormSubmitted');
+                return $this->redirect(['view', 'id' => $model->id]);
             }
-
-            Yii::$app->session->setFlash('questionFormSubmitted');
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('ask', compact('model'));
-        }
+            
+        return $this->render('ask', compact('model'));
     }
 
     /**

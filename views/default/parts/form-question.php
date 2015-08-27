@@ -39,4 +39,4 @@ $autocompleteRoute = ['/qa/default/tag-suggest'];
         </div>
     </div>
 
-<? ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>

@@ -58,7 +58,7 @@ class QuestionSearch extends Question
         $dataProvider = $this->search($params);
         $dataProvider->query
             ->joinWith('favorites', true, 'RIGHT JOIN')
-            ->andWhere([self::tableName() . '.user_id' => $userID]);
+            ->andWhere(['{{%qa_favorite}}.user_id' => $userID]);
 
         return $dataProvider;
     }

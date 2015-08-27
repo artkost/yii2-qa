@@ -97,6 +97,7 @@ class Favorite extends ActiveRecord
                 ],
                 'value' => function ($event) {
                     $ip = ip2long(Yii::$app->request->getUserIP());
+
                     if ($ip > 0x7FFFFFFF) {
                         $ip -= 0x100000000;
                     }

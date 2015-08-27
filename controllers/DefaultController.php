@@ -207,12 +207,11 @@ class DefaultController extends Controller
                     $model->status = QuestionInterface::STATUS_PUBLISHED;
                 }
 
-                if (!$model->save()) {
-                    throw new DbException(Module::t('main', 'Error save question'));
-                }
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('questionFormSubmitted');
 
-                Yii::$app->session->setFlash('questionFormSubmitted');
-                return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
 
             return $this->render('edit', compact('model'));
@@ -233,8 +232,7 @@ class DefaultController extends Controller
         /** @var Question $model */
         $model = $this->findModel(Question::className(), $id);
 
-        if ($model->isAuthor()) {
-            $model->delete();
+        if ($model->isAuthor() && $model->delete()) {
             return $this->redirect(['index']);
         }
 
@@ -258,7 +256,8 @@ class DefaultController extends Controller
                 Yii::$app->session->setFlash('questionFormSubmitted');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-            
+        }
+
         return $this->render('ask', compact('model'));
     }
 

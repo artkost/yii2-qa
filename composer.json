@@ -23,7 +23,8 @@
     "require": {
         "yiisoft/yii2": "~2.0.0",
         "yiisoft/yii2-bootstrap": "*",
-        "bower-asset/typeahead.js": "0.10.*"
+        "bower-asset/typeahead.js": "0.10.*",
+        "creocoder/yii2-taggable": "^2.0"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

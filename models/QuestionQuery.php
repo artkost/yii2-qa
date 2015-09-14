@@ -3,7 +3,7 @@ namespace artkost\qa\models;
 
 use yii\db\ActiveQuery;
 
-class QuestionQuery extends ActiveQuery
+class QuestionQuery extends ActiveQuery implements QuestionQueryInterface
 {
 
     /**

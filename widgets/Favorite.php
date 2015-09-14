@@ -2,7 +2,7 @@
 
 namespace artkost\qa\widgets;
 
-use artkost\qa\models\Favorite as FavoriteModel;
+use artkost\qa\models\FavoriteInterface as FavoriteModel;
 use yii\base\Widget;
 
 /**

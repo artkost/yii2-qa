@@ -20,7 +20,7 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property Question $question
  */
-class Favorite extends ActiveRecord
+class Favorite extends ActiveRecord implements FavoriteInterface
 {
 
     /**

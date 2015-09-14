@@ -61,7 +61,7 @@ class Tag extends ActiveRecord
     }
 
     /**
-     *  Update frequency of tags and add new tags
+     * Update frequency of tags and add new tags
      * @param $tags
      */
     public static function addTags($tags)

@@ -4,6 +4,7 @@ namespace artkost\qa;
 
 use artkost\qa\models\Answer;
 use artkost\qa\models\Question;
+use artkost\qa\models\QuestionQuery;
 use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\InvalidConfigException;
@@ -40,5 +41,6 @@ class Bootstrap implements BootstrapInterface
 
         Yii::$container->set('artkost\qa\models\AnswerInterface', Answer::className());
         Yii::$container->set('artkost\qa\models\QuestionInterface', Question::className());
+        Yii::$container->set('artkost\qa\models\QuestionQueryInterface', QuestionQuery::className());
     }
 }

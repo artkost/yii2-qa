@@ -2,7 +2,9 @@
 
 namespace artkost\qa\models;
 
-interface QuestionInterface
+use yii\db\ActiveRecordInterface;
+
+interface QuestionInterface extends ActiveRecordInterface
 {
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
@@ -13,11 +15,11 @@ interface QuestionInterface
 
     public function normalizeTags($attribute, $params);
 
+    public function haveDraft($data);
+
     public function isAuthor();
 
     public function isFavorite($user = false);
-
-    public function haveDraft($data);
 
     public function isDraft();
 
@@ -36,6 +38,4 @@ interface QuestionInterface
     public function getFavorite();
 
     public function getFavorites();
-
-    public function getFavoriteCount();
 }

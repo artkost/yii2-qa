@@ -51,7 +51,7 @@ class Question extends ActiveRecord implements QuestionInterface
      */
     public static function find()
     {
-        return new QuestionQuery(get_called_class());
+        return new QuestionQueryInterface(get_called_class());
     }
 
     /**
@@ -163,7 +163,7 @@ class Question extends ActiveRecord implements QuestionInterface
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        Tag::updateFrequency($this->_oldTags, $this->tags);
+        TagInterface::updateFrequency($this->_oldTags, $this->tags);
     }
 
     /**
@@ -172,10 +172,10 @@ class Question extends ActiveRecord implements QuestionInterface
     public function afterDelete()
     {
         parent::afterDelete();
-        Tag::updateFrequency($this->tags, '');
-        Vote::removeRelation($this);
-        Answer::removeRelation($this->id);
-        Favorite::removeRelation($this->id);
+        TagInterface::updateFrequency($this->tags, '');
+        VoteInterface::removeRelation($this);
+        AnswerInterface::removeRelation($this->id);
+        FavoriteInterface::removeRelation($this->id);
     }
 
     /**
@@ -183,7 +183,7 @@ class Question extends ActiveRecord implements QuestionInterface
      */
     public function normalizeTags($attribute, $params)
     {
-        $this->tags = Tag::array2String(array_unique(Tag::string2Array($this->tags)));
+        $this->tags = TagInterface::array2String(array_unique(TagInterface::string2Array($this->tags)));
     }
 
     /**
@@ -203,7 +203,7 @@ class Question extends ActiveRecord implements QuestionInterface
     {
         $user = ($user) ? $user : Yii::$app->user;
 
-        return Favorite::find()->where(['user_id' => $user->id, 'question_id' => $this->id])->exists();
+        return FavoriteInterface::find()->where(['user_id' => $user->id, 'question_id' => $this->id])->exists();
     }
 
     /**
@@ -238,9 +238,9 @@ class Question extends ActiveRecord implements QuestionInterface
     public function toggleFavorite()
     {
         if ($this->isFavorite()) {
-            return Favorite::remove($this->id);
+            return FavoriteInterface::remove($this->id);
         } else {
-            return Favorite::add($this->id);
+            return FavoriteInterface::add($this->id);
         }
     }
 
@@ -249,7 +249,7 @@ class Question extends ActiveRecord implements QuestionInterface
      */
     public function getTagsList()
     {
-        return Tag::string2Array($this->tags);
+        return TagInterface::string2Array($this->tags);
     }
 
     /**
@@ -283,7 +283,7 @@ class Question extends ActiveRecord implements QuestionInterface
      */
     public function getAnswers()
     {
-        return $this->hasMany(Answer::className(), ['question_id' => 'id']);
+        return $this->hasMany(AnswerInterface::className(), ['question_id' => 'id']);
     }
 
     /**
@@ -301,7 +301,7 @@ class Question extends ActiveRecord implements QuestionInterface
      */
     public function getFavorite()
     {
-        return $this->hasOne(Favorite::className(), ['question_id' => 'id']);
+        return $this->hasOne(FavoriteInterface::className(), ['question_id' => 'id']);
     }
 
     /**
@@ -310,14 +310,6 @@ class Question extends ActiveRecord implements QuestionInterface
      */
     public function getFavorites()
     {
-        return $this->hasMany(Favorite::className(), ['question_id' => 'id']);
-    }
-
-    /**
-     * @return int|string
-     */
-    public function getFavoriteCount()
-    {
-        return $this->hasMany(Favorite::className(), ['question_id' => 'id'])->count();
+        return $this->hasMany(FavoriteInterface::className(), ['question_id' => 'id']);
     }
 }

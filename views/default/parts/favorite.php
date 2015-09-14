@@ -11,5 +11,5 @@ use artkost\qa\Module;
        href="<?= Module::url(['question-favorite', 'id' => $model->id]) ?>">
         <span class="glyphicon <?= ($model->isFavorite()) ? 'glyphicon-star' : 'glyphicon-star-empty' ?>"></span>
     </a>
-    <div class="qa-favorite-count"><?= $model->getFavoriteCount() ?></div>
+    <div class="qa-favorite-count"><?= $model->favorites->count() ?></div>
 </div>

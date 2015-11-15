@@ -2,27 +2,27 @@
 
 namespace artkost\qa\models;
 
-use yii\db\ActiveRecordInterface;
-
-interface FavoriteInterface extends ActiveRecordInterface
+interface FavoriteInterface
 {
+    const CLASS_NAME = 'artkost\qa\models\FavoriteInterface';
+
     /**
      * @param $id
      * @return mixed
      */
-    public static function removeRelation($id);
+    public function removeRelation($id);
 
     /**
      * @param $id
      * @return boolean
      */
-    public static function add($id);
+    public function add($id);
 
     /**
      * @param $id
      * @return boolean
      */
-    public static function remove($id);
+    public function remove($id);
 
     /**
      * @return QuestionInterface

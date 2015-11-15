@@ -8,6 +8,7 @@ use yii\base\UnknownClassException;
 use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecordInterface;
 
 /**
  * Class Votes
@@ -24,7 +25,7 @@ use yii\behaviors\TimestampBehavior;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Vote extends ActiveRecord
+class Vote extends ActiveRecord implements VoteInterface
 {
     const TYPE_UP = 'up';
     const TYPE_DOWN = 'down';
@@ -46,7 +47,7 @@ class Vote extends ActiveRecord
      * @param int $userId
      * @return bool
      */
-    public static function isUserCan($model, $userId)
+    public function isUserCan($model, $userId)
     {
         //if he try vote on its own question
         if (isset($model['user_id']) && $model['user_id'] == $userId) {
@@ -54,10 +55,49 @@ class Vote extends ActiveRecord
         } else {
             return !self::find()->where([
                 'user_id' => $userId,
-                'entity' => self::modelEntityType($model),
+                'entity' => self::getEntityType($model),
                 'entity_id' => $model['id']
             ])->exists();
         }
+    }
+
+    /**
+     * @param $model
+     * @return int
+     */
+    public function removeRelation($model)
+    {
+        return self::deleteAll('entity_id=:entity_id AND entity=:entity', [
+            ':entity_id' => $model['id'],
+            ':entity' => self::getEntityType($model)
+        ]);
+    }
+
+    /**
+     * Increment votes for given model
+     * @param ActiveRecordInterface $model
+     * @param string $type of vote, up or down
+     * @return ActiveRecord
+     */
+    public function process(ActiveRecordInterface $model, $type)
+    {
+        $value = self::value($type);
+
+        if (isset($model['votes'])) {
+            $model['votes'] += $value;
+
+            $vote = new self([
+                'entity_id' => $model['id'],
+                'entity' => self::getEntityType($model),
+                'vote' => $value
+            ]);
+
+            if ($vote->save() && $model->save()) {
+                return $model;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -66,7 +106,7 @@ class Vote extends ActiveRecord
      * @throws UnknownClassException
      * @return string
      */
-    protected static function modelEntityType($model)
+    protected static function getEntityType($model)
     {
         if ($model instanceof QuestionInterface) {
             return self::ENTITY_QUESTION;
@@ -76,45 +116,6 @@ class Vote extends ActiveRecord
             $className = get_class($model);
             throw new UnknownClassException("Model class '{$className}' not supported");
         }
-    }
-
-    /**
-     * @param $model
-     * @return int
-     */
-    public static function removeRelation($model)
-    {
-        return self::deleteAll('entity_id=:entity_id AND entity=:entity', [
-            ':entity_id' => $model['id'],
-            ':entity' => self::modelEntityType($model)
-        ]);
-    }
-
-    /**
-     * Increment votes for given model
-     * @param ActiveRecord $model
-     * @param string $type of vote, up or down
-     * @return ActiveRecord
-     */
-    public static function process(ActiveRecord $model, $type)
-    {
-        $value = self::value($type);
-
-        if (isset($model['votes'])) {
-            $model['votes'] += $value;
-
-            $vote = new self([
-                'entity_id' => $model['id'],
-                'vote' => $value,
-                'entity' => self::modelEntityType($model)
-            ]);
-
-            if ($vote->save() && $model->save()) {
-                return $model;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -184,5 +185,4 @@ class Vote extends ActiveRecord
             ]
         ];
     }
-
 }

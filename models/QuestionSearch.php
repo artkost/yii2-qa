@@ -10,7 +10,7 @@ use yii\data\ActiveDataProvider;
  * Question Model Search
  * @package artkost\qa\models
  */
-class QuestionSearch extends Question
+class QuestionSearch extends Model implements QuestionSearchInterface
 {
 
     /**
@@ -18,10 +18,8 @@ class QuestionSearch extends Question
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
-
 
     /**
      * @param $params
@@ -29,7 +27,8 @@ class QuestionSearch extends Question
      */
     public function search($params)
     {
-        $query = self::find()->with('user');
+        $modelClass = get_class($this->getQuestionModel());
+        $query = $modelClass::find()->with('user');
 
         $query->andWhere(['status' => QuestionInterface::STATUS_PUBLISHED]);
 
@@ -76,6 +75,11 @@ class QuestionSearch extends Question
             ->where(['user_id' => $userID]);
 
         return $dataProvider;
+    }
+
+    protected function getQuestionModel()
+    {
+        return Yii::$container->get(QuestionInterface::CLASS_NAME);
     }
 
     protected function addCondition($query, $attribute, $partialMatch = false)

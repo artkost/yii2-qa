@@ -6,12 +6,15 @@ use yii\db\ActiveRecordInterface;
 
 interface QuestionInterface extends ActiveRecordInterface
 {
+    const CLASS_NAME = 'artkost\qa\models\QuestionInterface';
+
     const STATUS_DRAFT = 0;
+
     const STATUS_PUBLISHED = 1;
 
-    public static function incrementAnswers($id);
+    public function incrementAnswers($id);
 
-    public static function decrementAnswers($id);
+    public function decrementAnswers($id);
 
     public function normalizeTags($attribute, $params);
 

@@ -31,11 +31,16 @@ class Favorite extends ActiveRecord implements FavoriteInterface
         return '{{%qa_favorite}}';
     }
 
+    public function getQuestionModel()
+    {
+        return Yii::$container->get(QuestionInterface::CLASS_NAME);
+    }
+
     /**
      * @param $id
      * @return bool
      */
-    public static function add($id)
+    public function add($id)
     {
         $favorite = new self();
         $favorite->attributes = ['question_id' => $id];
@@ -52,7 +57,7 @@ class Favorite extends ActiveRecord implements FavoriteInterface
      * @return bool
      * @throws \Exception
      */
-    public static function remove($id)
+    public function remove($id)
     {
         /** @var \yii\db\ActiveQuery $query */
         $query = self::find()->where(['question_id' => $id, 'user_id' => Yii::$app->user->id]);
@@ -68,7 +73,7 @@ class Favorite extends ActiveRecord implements FavoriteInterface
      * @param int $question_id
      * @return int
      */
-    public static function removeRelation($question_id)
+    public function removeRelation($question_id)
     {
         return self::deleteAll(
             'question_id=:question_id',
@@ -148,6 +153,6 @@ class Favorite extends ActiveRecord implements FavoriteInterface
      */
     public function getQuestion()
     {
-        return $this->hasOne(Question::className(), ['id' => 'question_id']);
+        return $this->hasOne(get_class($this->questionModel), ['id' => 'question_id']);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 namespace artkost\qa\models;
 
-use yii\db\ActiveRecordInterface;
-
-interface QuestionQueryInterface extends ActiveRecordInterface
+interface QuestionQueryInterface
 {
+    const CLASS_NAME = 'artkost\qa\models\QuestionQueryInterface';
+
     /**
      * @return static
      */

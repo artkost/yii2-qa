@@ -2,7 +2,7 @@
 
 namespace artkost\qa\models;
 
-use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecordInterface;
 use yii\web\IdentityInterface;
 
@@ -11,12 +11,23 @@ use yii\web\IdentityInterface;
  */
 interface AnswerInterface extends ActiveRecordInterface
 {
+    const CLASS_NAME = 'artkost\qa\models\AnswerInterface';
     const STATUS_DRAFT = 0;
     const STATUS_PUBLISHED = 1;
 
-    public static function removeRelation($questionID);
+    /**
+     * Removes answers related to question
+     * @param $questionID
+     * @return mixed
+     */
+    public function removeRelation($questionID);
 
-    public static function applyOrder(ActiveQuery $query, $order);
+    /**
+     * @param ActiveQueryInterface $query
+     * @param $order
+     * @return mixed
+     */
+    public function applyOrder(ActiveQueryInterface $query, $order);
 
     /**
      * Checks if answer posted by author

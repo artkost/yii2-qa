@@ -17,7 +17,7 @@ use yii\helpers\Html;
  * @author Nikolay Kostyurin <nikolay@artkost.ru>
  * @since 2.0
  */
-class Tag extends ActiveRecord
+class Tag extends ActiveRecord implements TagInterface
 {
     /**
      * @inheritdoc
@@ -32,7 +32,7 @@ class Tag extends ActiveRecord
      * @param $tags
      * @return string
      */
-    public static function array2String($tags)
+    public function array2String($tags)
     {
         return implode(', ', $tags);
     }
@@ -42,7 +42,7 @@ class Tag extends ActiveRecord
      * @param $tags
      * @return array
      */
-    public static function string2Array($tags)
+    public function string2Array($tags)
     {
         return preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY);
     }
@@ -52,7 +52,7 @@ class Tag extends ActiveRecord
      * @param $oldTags
      * @param $newTags
      */
-    public static function updateFrequency($oldTags, $newTags)
+    public function updateFrequency($oldTags, $newTags)
     {
         $oldTags = self::string2Array($oldTags);
         $newTags = self::string2Array($newTags);
@@ -64,7 +64,7 @@ class Tag extends ActiveRecord
      * Update frequency of tags and add new tags
      * @param $tags
      */
-    public static function addTags($tags)
+    public function addTags($tags)
     {
         self::updateAllCounters(['frequency' => 1], ['name' => $tags]);
 
@@ -82,7 +82,7 @@ class Tag extends ActiveRecord
      * Update frequency of tags and remove with frequency < 0
      * @param $tags
      */
-    public static function removeTags($tags)
+    public function removeTags($tags)
     {
         if (empty($tags)) {
             return;
@@ -98,7 +98,7 @@ class Tag extends ActiveRecord
      * @param int $limit
      * @return array
      */
-    public static function suggest($keyword, $limit = 20)
+    public function suggest($keyword, $limit = 20)
     {
         /** @var self[] $tags */
         $tags = self::find()

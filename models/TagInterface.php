@@ -2,14 +2,19 @@
 
 namespace artkost\qa\models;
 
-use yii\db\ActiveRecordInterface;
-
-interface TagInterface extends ActiveRecordInterface
+interface TagInterface
 {
+    const CLASS_NAME = 'artkost\qa\models\TagInterface';
 
-    public static function updateFrequency($tags, $string);
+    public function array2String($tags);
 
-    public static function array2String(array $array);
+    public function string2Array($tags);
 
-    public static function string2Array($tags);
+    public function updateFrequency($tags, $string);
+
+    public function addTags($tags);
+
+    public function removeTags($tags);
+
+    public function suggest($keyword, $limit = 20);
 }

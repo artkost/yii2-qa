@@ -9,6 +9,7 @@ use yii\behaviors\AttributeBehavior;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\helpers\HtmlPurifier;
 use yii\helpers\Markdown;
 
@@ -47,27 +48,35 @@ class Answer extends ActiveRecord implements AnswerInterface
         return '{{%qa_answer}}';
     }
 
+    public function getQuestionModel()
+    {
+        return Yii::$container->get(QuestionInterface::CLASS_NAME);
+    }
+
+    public function getVoteModel()
+    {
+        return Yii::$container->get(VoteInterface::CLASS_NAME);
+    }
+
     /**
      * @param int $questionID
      * @return int
      */
-    public static function removeRelation($questionID)
+    public function removeRelation($questionID)
     {
         return self::deleteAll(
             'question_id=:question_id',
-            [
-                ':question_id' => $questionID,
-            ]
+            [':question_id' => $questionID]
         );
     }
 
     /**
      * Apply possible answers order to query
-     * @param ActiveQuery $query
+     * @param ActiveQueryInterface $query
      * @param $order
      * @return string
      */
-    public static function applyOrder(ActiveQuery $query, $order)
+    public function applyOrder(ActiveQueryInterface $query, $order)
     {
         switch ($order) {
             case 'oldest':
@@ -143,7 +152,7 @@ class Answer extends ActiveRecord implements AnswerInterface
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            Question::incrementAnswers($this->question_id);
+            $this->questionModel->incrementAnswers($this->question_id);
         }
     }
 
@@ -153,8 +162,9 @@ class Answer extends ActiveRecord implements AnswerInterface
     public function afterDelete()
     {
         parent::afterDelete();
-        Question::decrementAnswers($this->question_id);
-        Vote::removeRelation($this);
+
+        $this->questionModel->decrementAnswers($this->question_id);
+        $this->voteModel->removeRelation($this);
     }
 
     /**
@@ -227,6 +237,6 @@ class Answer extends ActiveRecord implements AnswerInterface
      */
     public function getQuestion()
     {
-        return $this->hasOne(Question::className(), ['id' => 'question_id']);
+        return $this->hasOne(get_class($this->questionModel), ['id' => 'question_id']);
     }
 }

@@ -21,7 +21,7 @@ class DeleteAction extends Action
     public function run($id)
     {
         /** @var Question $model */
-        $model = $this->findModel($this->modelClass, $id);
+        $model = $this->findModelByID($id);
 
         if ($model->isAuthor() && $model->delete()) {
             return $this->controller->redirect($this->getValue('redirectRoute', ['index']));

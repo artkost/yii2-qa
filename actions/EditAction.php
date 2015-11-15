@@ -6,6 +6,7 @@ use artkost\qa\models\Question;
 use artkost\qa\models\QuestionInterface;
 use artkost\qa\Module;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -16,12 +17,7 @@ class EditAction extends Action
     /**
      * @var string
      */
-    public $viewRoute = 'view';
-
-    /**
-     * @var string
-     */
-    public $viewFile = 'edit';
+    public $redirectRoute;
 
     /**
      * @param $id
@@ -33,7 +29,7 @@ class EditAction extends Action
     public function run($id)
     {
         /** @var Question $model */
-        $model = $this->findModel($this->modelClass, $id);
+        $model = $this->findModelByID($id);
 
         if ($model->isAuthor()) {
             if ($model->load($_POST)) {
@@ -43,12 +39,11 @@ class EditAction extends Action
                     $model->status = QuestionInterface::STATUS_PUBLISHED;
                 }
 
-                if (!$model->save()) {
-                    throw new Exception(Module::t('main', 'Error save question'));
+                if ($model->save()) {
+                    $this->trigger(self::EVENT_SUBMITTED);
                 }
 
-                $this->trigger(self::EVENT_SUBMITTED);
-                return $this->controller->redirect([$this->viewRoute, 'id' => $model->id]);
+                return $this->controller->redirect($this->getValue('redirectRoute', ['view', 'id' => $model->id]));
             }
 
             return $this->render(compact('model'));

@@ -5,13 +5,16 @@ namespace artkost\qa\actions;
 use artkost\qa\ActiveRecord;
 use artkost\qa\models\Vote;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 class VoteAction extends Action
 {
 
-    public $viewRoute = 'view';
+    public $redirectRoute;
+
+    public $partialFile = 'parts/vote';
 
     /**
      * @param $id
@@ -21,7 +24,7 @@ class VoteAction extends Action
      */
     public function run($id, $vote)
     {
-        return $this->entityVote($this->findModel($this->modelClass, $id), $vote);
+        return $this->entityVote($this->findModelByID($id), $vote, $this->partialFile);
     }
 
     /**
@@ -35,11 +38,13 @@ class VoteAction extends Action
     protected function entityVote($model, $type, $partial = 'parts/vote', $format = 'json')
     {
         $data = ['status' => false];
+        /** @var Vote $vote */
+        $vote = $this->getModel();
 
-        if ($model && Vote::isUserCan($model, Yii::$app->user->id)) {
+        if ($model && $vote->isUserCan($model, Yii::$app->user->id)) {
             $data = [
                 'status' => true,
-                'html' => $this->controller->renderPartial($partial, ['model' => Vote::process($model, $type)])
+                'html' => $this->controller->renderPartial($partial, ['model' => $vote->process($model, $type), 'vote' => $vote])
             ];
         }
 
@@ -50,6 +55,6 @@ class VoteAction extends Action
             ]);
         }
 
-        return $this->controller->redirect([$this->viewRoute, 'id' => $model['id']]);
+        return $this->controller->redirect($this->getValue('redirectRoute', ['view', 'id' => $model['id']]));
     }
 }

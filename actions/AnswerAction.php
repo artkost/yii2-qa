@@ -4,6 +4,7 @@ namespace artkost\qa\actions;
 
 use artkost\qa\models\Answer;
 use artkost\qa\models\Question;
+use yii\helpers\ArrayHelper;
 use yii\web\Response;
 
 class AnswerAction extends Action
@@ -13,7 +14,7 @@ class AnswerAction extends Action
     /**
      * @var string
      */
-    public $viewRoute = 'view';
+    public $redirectRoute;
 
     /**
      * @var string
@@ -27,7 +28,7 @@ class AnswerAction extends Action
     public function run($id)
     {
         /** @var Answer $model */
-        $model = $this->getModel(['question_id' => $id]);
+        $model = $this->getModel([['question_id' => $id]]);
 
         /** @var Question $question */
         $question = $model->question;
@@ -39,7 +40,7 @@ class AnswerAction extends Action
         if ($model->load($_POST) && $model->save()) {
             $this->trigger(self::EVENT_SUBMITTED);
 
-            return $this->controller->redirect([$this->viewRoute, 'id' => $question->id, 'alias' => $question->alias]);
+            return $this->controller->redirect($this->getValue('redirectRoute', ['view', 'id' => $question->id, 'alias' => $question->alias]));
         } else {
             return $this->render(compact('model', 'question'));
         }

@@ -4,8 +4,8 @@ namespace artkost\qa\actions;
 
 use artkost\qa\models\Question;
 use artkost\qa\models\QuestionInterface;
-use artkost\qa\Module;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 
 class AskAction extends Action
 {
@@ -14,7 +14,7 @@ class AskAction extends Action
     /**
      * @var string
      */
-    public $viewRoute = 'view';
+    public $redirectRoute;
 
     /**
      * @var string
@@ -35,12 +35,11 @@ class AskAction extends Action
                 $model->status = QuestionInterface::STATUS_DRAFT;
             }
 
-            if (!$model->save()) {
-                throw new Exception(Module::t('main', 'Error create question'));
+            if ($model->save()) {
+                $this->trigger(self::EVENT_SUBMITTED);
             }
 
-            $this->trigger(self::EVENT_SUBMITTED);
-            return $this->controller->redirect([$this->viewRoute, 'id' => $model->id]);
+            return $this->controller->redirect($this->getValue('redirectRoute', ['view', 'id' => $model->id]));
         } else {
             return $this->render(compact('model'));
         }

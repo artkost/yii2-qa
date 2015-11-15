@@ -3,12 +3,13 @@
 namespace artkost\qa\actions;
 
 use artkost\qa\models\Question;
+use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 class DeleteAction extends Action
 {
-    public $indexRoute = 'index';
+    public $redirectRoute;
 
     /**
      * @param $id
@@ -23,7 +24,7 @@ class DeleteAction extends Action
         $model = $this->findModel($this->modelClass, $id);
 
         if ($model->isAuthor() && $model->delete()) {
-            return $this->controller->redirect([$this->indexRoute]);
+            return $this->controller->redirect($this->getValue('redirectRoute', ['index']));
         }
 
         return $this->forbiddenException();

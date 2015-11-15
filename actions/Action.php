@@ -8,6 +8,7 @@ use artkost\qa\models\QuestionInterface;
 use artkost\qa\Module;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\helpers\ArrayHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -67,6 +68,15 @@ class Action extends \yii\base\Action
     }
 
     /**
+     * @param $id
+     * @return ActiveRecord
+     */
+    protected function findModelByID($id)
+    {
+        return $this->findModel(get_class($this->getModel()), $id);
+    }
+
+    /**
      * @param string $modelClass
      * @param null $id
      * @return ActiveRecord
@@ -91,6 +101,20 @@ class Action extends \yii\base\Action
     protected function getModel($params = [], $config = [])
     {
         return Yii::$container->get($this->modelClass, $params, $config);
+    }
+
+    /**
+     * @param $key
+     * @param $default
+     * @return mixed
+     */
+    protected function getValue($key, $default)
+    {
+        if ($this->$key == null) {
+            return $default;
+        } else {
+            return ArrayHelper::getValue($this, $key, $default);
+        }
     }
 
     protected function render($params = [])

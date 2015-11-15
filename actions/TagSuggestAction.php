@@ -19,7 +19,7 @@ class TagSuggestAction extends Action
         ];
 
         if (isset($_GET['q']) && ($keyword = trim($_GET['q'])) !== '') {
-            $response['data']['items'] = Tag::suggest($keyword);
+            $response['data']['items'] = $this->getModel()->suggest($keyword);
         }
 
         return new Response($response);

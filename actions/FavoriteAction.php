@@ -4,12 +4,14 @@ namespace artkost\qa\actions;
 
 use artkost\qa\models\Question;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Response;
 
 class FavoriteAction extends Action
 {
 
-    public $viewRoute = 'view';
+    public $redirectRoute;
+
     public $partialViewFile = 'parts/favorite';
 
     /**
@@ -23,7 +25,9 @@ class FavoriteAction extends Action
         $model = $modelClass::find()->with('favorite')->where(['id' => $id])->one();
 
         $response = [
-            'data' => ['status' => false],
+            'data' => [
+                'status' => false
+            ],
             'format' => 'json'
         ];
 
@@ -36,7 +40,7 @@ class FavoriteAction extends Action
             return new Response($response);
         }
 
-        return $this->controller->redirect([$this->viewRoute, 'id' => $id]);
+        return $this->controller->redirect($this->getValue('redirectRoute', ['view', 'id' => $id]));
     }
 
 }

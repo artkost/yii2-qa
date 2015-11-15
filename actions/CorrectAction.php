@@ -9,25 +9,25 @@ use yii\web\Response;
 
 class CorrectAction extends Action
 {
-    public $questionClass = 'artkost\qa\models\QuestionInterface';
-
-    public $viewRoute = 'view';
+    public $redirectRoute;
 
     public $partialViewFile = 'parts/answer-correct';
 
     public function run($id, $questionId)
     {
         /** @var Answer $answer */
-        $answer = $this->findModel($this->modelClass, $id);
+        $answer = $this->findModelByID($id);
         /** @var Question $question */
         $question = $answer->question;
 
         $response = [
-            'data' => ['status' => false],
+            'data' => [
+                'status' => false
+            ],
             'format' => 'json'
         ];
 
-        if ($question && $question->isAuthor()) {
+        if ($question && $question->id == $questionId && $question->isAuthor()) {
             $response['data']['status'] = $answer->toggleCorrect();
             $response['data']['html'] = $this->controller->renderPartial($this->partialViewFile, compact('answer', 'question'));
         }
@@ -36,6 +36,6 @@ class CorrectAction extends Action
             return new Response($response);
         }
 
-        return $this->controller->redirect([$this->viewRoute, 'id' => $questionId]);
+        return $this->controller->redirect($this->getValue('redirectRoute', ['view', 'id' => $questionId]));
     }
 }

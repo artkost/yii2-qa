@@ -4,14 +4,17 @@ namespace artkost\qa\actions;
 
 use artkost\qa\models\Answer;
 use artkost\qa\models\Question;
+use artkost\qa\models\Vote;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\web\NotFoundHttpException;
 
 class ViewAction extends Action
 {
 
     public $answerClass;
+    public $voteClass;
 
     public $viewFile = 'view';
 
@@ -20,7 +23,7 @@ class ViewAction extends Action
      * @throws NotFoundHttpException
      * @return string
      */
-    public function actionView($id)
+    public function run($id)
     {
         /** @var Question $model */
         $modelClass = get_class($this->getModel());
@@ -35,13 +38,16 @@ class ViewAction extends Action
                 $model->updateCounters(['views' => 1]);
             }
 
-            $answerClass = $this->answerClass;
-            /** @var Answer $model */
-            $answer = new $answerClass;
+            /** @var Answer $answer */
+            $answer = Yii::$container->get($this->answerClass);
 
-            $query = $answerClass::find()->with('user');
+            /** @var Vote $answer */
+            $vote = Yii::$container->get($this->voteClass);
 
-            $answerOrder = $answerClass::applyOrder($query, Yii::$app->request->get('answers', 'votes'));
+            /** @var ActiveQuery $query */
+            $query = $answer::find()->with('user');
+
+            $answerOrder = $answer->applyOrder($query, Yii::$app->request->get('answers', 'votes'));
 
             $answerDataProvider = new ActiveDataProvider([
                 'query' => $query->where(['question_id' => $model->id]),
@@ -50,7 +56,7 @@ class ViewAction extends Action
                 ],
             ]);
 
-            return $this->render(compact('model', 'answer', 'answerDataProvider', 'answerOrder'));
+            return $this->render(compact('model', 'answer', 'vote', 'answerDataProvider', 'answerOrder'));
         }
 
         return $this->notFoundException();

@@ -2,7 +2,8 @@
 
 namespace artkost\qa\widgets;
 
-use artkost\qa\models\FavoriteInterface as FavoriteModel;
+use artkost\qa\models\FavoriteInterface;
+use Yii;
 use yii\base\Widget;
 
 /**
@@ -19,7 +20,9 @@ class Favorite extends Widget
      */
     public function run()
     {
-        $models = FavoriteModel::find()
+        $model = Yii::$container->get(FavoriteInterface::CLASS_NAME);
+
+        $models = $model::find()
             ->limit($this->limit)
             ->where(['user_id' => $this->userID])
             ->with('question')

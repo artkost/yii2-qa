@@ -3,6 +3,8 @@
 namespace artkost\qa\widgets;
 
 use artkost\qa\models\Tag;
+use artkost\qa\models\TagInterface;
+use Yii;
 use yii\base\Widget;
 
 /**
@@ -19,7 +21,9 @@ class Tags extends Widget
      */
     public function run()
     {
-        $models = Tag::find()
+        $model = Yii::$container->get(TagInterface::CLASS_NAME);
+
+        $models = $model::find()
             ->orderBy('frequency')
             ->limit($this->limit)
             ->all();

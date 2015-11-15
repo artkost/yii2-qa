@@ -3,6 +3,8 @@
 namespace artkost\qa\widgets;
 
 use artkost\qa\models\Question;
+use artkost\qa\models\QuestionInterface;
+use Yii;
 use yii\base\Widget;
 
 /**
@@ -19,7 +21,9 @@ class Popular extends Widget
      */
     public function run()
     {
-        $models = Question::find()
+        $model = Yii::$container->get(QuestionInterface::CLASS_NAME);
+
+        $models = $model::find()
             ->published()
             ->views($this->views)
             ->limit($this->limit)

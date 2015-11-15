@@ -11,7 +11,7 @@ $userId = Yii::$app->user->id;
 ?>
 <span class="qa-answer-correct js-answer-correct">
     <?php if ($question->isAuthor()): ?>
-        <a title="<?= Module::t('main', 'Mark answer as correct') ?>" class="btn <?= ($answer->isCorrect()) ? 'btn-warning' : 'btn-default' ?> btn-sm qa-answer-correct-link js-answer-correct-link"
+        <a title="<?= ($answer->isCorrect()) ? Module::t('main', 'Answer is correct') : Module::t('main', 'Mark answer as correct') ?>" class="btn <?= ($answer->isCorrect()) ? 'btn-warning' : 'btn-default' ?> btn-sm qa-answer-correct-link js-answer-correct-link"
            href="<?= Module::url(['answer-correct', 'id' => $answer->id, 'questionId' => $question->id]) ?>">
             <span class="glyphicon glyphicon-ok"></span>
         </a>

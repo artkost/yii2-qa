@@ -2,6 +2,7 @@
 /**
  * @var \yii\db\ActiveRecord $model
  * @var string $route
+ * @var Vote $vote
  */
 use artkost\qa\models\Vote;
 use artkost\qa\Module;
@@ -10,7 +11,7 @@ $userId = Yii::$app->user->id;
 
 ?>
 <span class="qa-like js-vote">
-    <?php if (Vote::isUserCan($model, $userId)): ?>
+    <?php if ($vote->isUserCan($model, $userId)): ?>
         <a class="btn btn-success btn-sm js-vote-up"
            href="<?= Module::url([$route, 'id' => $model->id, 'vote' => 'up']) ?>"
            title="<?= Module::t('main', 'Like') ?>">

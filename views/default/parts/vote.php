@@ -2,14 +2,18 @@
 /**
  * @var \yii\db\ActiveRecord $model
  * @var string $route
+ * @var ActiveRecord $model
+ * @var Vote $vote
  */
+
+use artkost\qa\ActiveRecord;
 use artkost\qa\models\Vote;
 use artkost\qa\Module;
 
 $userId = Yii::$app->user->id;
 ?>
 <div class="qa-vote js-vote">
-    <?php if (Vote::isUserCan($model, $userId)): ?>
+    <?php if ($vote->isUserCan($model, $userId)): ?>
         <a class="qa-vote-up js-vote-up"
            href="<?= Module::url([$route, 'id' => $model->id, 'vote' => 'up']) ?>"
            title="<?= Module::t('main', 'Vote up') ?>">
@@ -21,7 +25,7 @@ $userId = Yii::$app->user->id;
         </span>
     <?php endif; ?>
     <span class="qa-vote-count"><?= $model->votes ?></span>
-    <?php if (Vote::isUserCan($model, $userId)): ?>
+    <?php if ($vote->isUserCan($model, $userId)): ?>
         <a class="qa-vote-down js-vote-down"
            href="<?= Module::url([$route, 'id' => $model->id, 'vote' => 'down']) ?>"
            title="<?= Module::t('main', 'Vote down') ?>">

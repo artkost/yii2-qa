@@ -1,10 +1,11 @@
 <?php
 /**
  * @var \artkost\qa\models\Question $model
- * @var \yii\data\ActiveDataProvider $answerDataProvider
- * @var string $answerOrder
  * @var \artkost\qa\models\Answer $answer
+ * @var \artkost\qa\models\Vote $vote
+ * @var \yii\data\ActiveDataProvider $answerDataProvider
  * @var \yii\web\View $this
+ * @var string $answerOrder
  */
 
 use artkost\qa\Module;
@@ -35,7 +36,7 @@ $answerOrders = [
         <section class="qa-view-aside col-md-2" role="aside">
             <?= $this->render('parts/created', ['model' => $model]) ?>
             <div class="qa-view-actions">
-                <?= $this->render('parts/vote', ['model' => $model, 'route' => 'question-vote']) ?>
+                <?= $this->render('parts/vote', ['model' => $model, 'vote' => $vote, 'route' => 'question-vote']) ?>
                 <?= $this->render('parts/favorite', ['model' => $model]) ?>
             </div>
         </section>
@@ -77,7 +78,7 @@ $answerOrders = [
                     <?= $this->render('parts/created', ['model' => $row]) ?>
                     <div class="qa-answer-like">
                         <?= $this->render('parts/answer-correct', ['answer' => $row, 'question' => $model]) ?>
-                        <?= $this->render('parts/like', ['model' => $row, 'route' => 'answer-vote']) ?>
+                        <?= $this->render('parts/like', ['model' => $row, 'vote' => $vote, 'route' => 'answer-vote']) ?>
                     </div>
                     <?= $this->render('parts/edit-links', ['model' => $row]) ?>
                 </section>
